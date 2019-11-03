@@ -24,7 +24,11 @@ func (r *Routine) Update() error {
 
 // Print the time in this format: MM D - HH:MM:SS"
 func (r *Routine) String() string {
-	return r.time.Format("Jan 2 - 03:04:05")
+	if r.time.Second() % 2 == 0 {
+		return r.time.Format("Jan 2 - 03:04")
+	} else {
+		return r.time.Format("Jan 2 - 03 04")
+	}
 }
 
 func (r *Routine) Sleep(d time.Duration) {
