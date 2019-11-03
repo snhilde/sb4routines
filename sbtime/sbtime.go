@@ -14,3 +14,10 @@ func New() *Routine {
 	r := Routine{time: time.Now()}
 	return &r
 }
+
+// Update the routine's current time
+func (r *Routine) Update() error {
+	r.time = time.Now()
+
+	return nil
+}
