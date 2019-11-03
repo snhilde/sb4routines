@@ -21,3 +21,8 @@ func (r *Routine) Update() error {
 
 	return nil
 }
+
+// Print the time in this format: MM D - HH:MM:SS"
+func (r *Routine) String() string {
+	return r.time.Format("Jan 2 - 03:04:05")
+}
