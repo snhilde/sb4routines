@@ -26,3 +26,7 @@ func (r *Routine) Update() error {
 func (r *Routine) String() string {
 	return r.time.Format("Jan 2 - 03:04:05")
 }
+
+func (r *Routine) Sleep(d time.Duration) {
+	time.Sleep(time.Second - d)
+}
