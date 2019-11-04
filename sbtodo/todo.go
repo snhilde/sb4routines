@@ -5,3 +5,12 @@ import (
 	"fmt"
 	"os"
 )
+
+type Routine struct {
+}
+
+// Return a new Routine object.
+func New() *Routine {
+	var r Routine
+	return &r
+}
