@@ -1,3 +1,4 @@
+// Package delim adds the dualstatus delimiter (';') to the statusbar to force a split.
 package sbdelim
 
 import (
