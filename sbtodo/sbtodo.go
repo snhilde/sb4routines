@@ -10,6 +10,7 @@ import (
 )
 
 // Routine is the main object for this package.
+// It contains the data obtained from the specified TODO file, including file info and a copy of the first 2 lines.
 // file will be the open file descriptor for the TODO file.
 type Routine struct {
 	path   string
