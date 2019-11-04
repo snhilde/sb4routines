@@ -1,3 +1,4 @@
+// Package sbtime displays the current time, according to the format.
 package sbtime
 
 import (
