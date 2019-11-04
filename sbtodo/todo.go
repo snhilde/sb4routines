@@ -6,12 +6,23 @@ import (
 	"os"
 )
 
+// Routine is the main object for this package.
+// file will be the open file descriptor for the TODO file.
 type Routine struct {
+	file *os.File
 }
 
 // Return a new Routine object.
-func New() *Routine {
+// s is the absolute path to the TODO file.
+func New(path string) *Routine {
 	var r Routine
+	var err error
+
+	r.file, err = os.Open(path)
+	if err != nil {
+		// TODO: handle error
+	}
+
 	return &r
 }
 
