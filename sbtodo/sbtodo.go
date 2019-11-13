@@ -97,11 +97,6 @@ func (r *Routine) String() string {
 	return b.String()
 }
 
-func (r *Routine) Sleep(d time.Duration) {
-	// TODO: change to 5 when done testing
-	time.Sleep(1 * time.Second - d)
-}
-
 func (r *Routine) readFile() error {
 	var err error
 
