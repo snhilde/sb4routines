@@ -32,8 +32,3 @@ func (r *Routine) String() string {
 		return r.time.Format("Jan 2 - 03 04")
 	}
 }
-
-// Sleep for the rest of the second.
-func (r *Routine) Sleep(d time.Duration) {
-	time.Sleep(time.Second - d)
-}
