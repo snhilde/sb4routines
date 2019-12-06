@@ -21,7 +21,7 @@ type Routine struct {
 }
 
 // Return a new Routine object.
-// s is the absolute path to the TODO file.
+// path is the absolute path to the TODO file.
 func New(path string) *Routine {
 	var r Routine
 
@@ -106,20 +106,14 @@ func (r *Routine) String() string {
 }
 
 func (r *Routine) readFile() {
-	var reader *bufio.Reader
-
 	r.file, r.err = os.Open(r.path)
 	if r.err != nil {
 		return
 	}
 	defer r.file.Close()
 
-	reader = bufio.NewReader(r.file)
+	reader := bufio.NewReader(r.file)
 
 	r.line1, r.err = reader.ReadString('\n')
-	if r.err != nil {
-		return
-	}
-
 	r.line2, r.err = reader.ReadString('\n')
 }
