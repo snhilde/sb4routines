@@ -4,7 +4,6 @@ package sbtodo
 import (
 	"fmt"
 	"os"
-	"time"
 	"strings"
 	"bufio"
 )
@@ -18,24 +17,26 @@ type Routine struct {
 	file  *os.File
 	line1  string
 	line2  string
+	err    error
 }
 
 // Return a new Routine object.
 // s is the absolute path to the TODO file.
 func New(path string) *Routine {
-	var r   Routine
-	var err error
+	var r Routine
 
 	r.path = path
 
-	r.info, err = os.Stat(r.path)
-	if err != nil {
-		// TODO: handle error
+	r.info, r.err = os.Stat(path)
+	if r.err != nil {
+		// We'll print the error in String().
+		return &r
 	}
 
-	err = r.readFile()
-	if err != nil {
-		// TODO: handle error
+	r.readFile()
+	if r.err != nil {
+		// We'll print the error in String().
+		return &r
 	}
 
 	return &r
@@ -48,35 +49,42 @@ func New(path string) *Routine {
  //   4. If the first line has content and the second line is indented, print "line1 -> line2".
  //   5. If both lines have content and both are flush, print "line1 | line2".
 func (r *Routine) Update() error {
-	info, err := os.Stat(r.path)
-	if err != nil {
-		// TODO: handle error
+	var new_info os.FileInfo
+
+	new_info, r.err = os.Stat(r.path)
+	if r.err != nil {
+		return r.err
 	}
 
 	// If mtime is not newer than what we already have, we can skip reading the file.
-	new_mtime := info.ModTime().UnixNano()
+	new_mtime := new_info.ModTime().UnixNano()
 	old_mtime := r.info.ModTime().UnixNano()
 	if (new_mtime > old_mtime) {
 		// The file was modified. Let's parse it.
-		err = r.readFile()
-		if err != nil {
-			// TODO: handle error
+		r.readFile()
+		if r.err != nil {
+			return r.err
 		}
 	}
 
-	r.info = info
+	r.info = new_info
 	return nil
 }
 
 func (r *Routine) String() string {
 	var b strings.Builder
 
+	// Handle any error we might have received in another stage.
+	if r.err != nil {
+		return r.err.Error()
+	}
+
 	r.line1 = strings.TrimSpace(r.line1)
 	if len(r.line1) > 0 {
 		// We have content in the first line. Start by adding that.
 		fmt.Fprintf(&b, "%s", r.line1)
 		if len(r.line2) > 0 {
-			// We have content in the second line as well. Let's find out which conjuction we need.
+			// We have content in the second line as well. Let's find out which conjuction to use.
 			if (strings.HasPrefix(r.line2, "\t")) || (strings.HasPrefix(r.line2, " ")) {
 				fmt.Fprintf(&b, " -> ")
 			} else {
@@ -97,38 +105,21 @@ func (r *Routine) String() string {
 	return b.String()
 }
 
-func (r *Routine) readFile() error {
-	var err error
+func (r *Routine) readFile() {
+	var reader *bufio.Reader
 
-	r.file, err = os.Open(r.path)
-	if err != nil {
-		// TODO: handle error
+	r.file, r.err = os.Open(r.path)
+	if r.err != nil {
+		return
 	}
 	defer r.file.Close()
 
-	err = r.readLines()
-	if err != nil {
-		// TODO: handle error
-	}
-
-	return err
-}
-
-func (r *Routine) readLines() error {
-	var reader *bufio.Reader
-	var err     error
-
 	reader = bufio.NewReader(r.file)
 
-	r.line1, err = reader.ReadString('\n')
-	if err != nil {
-		//TODO: handle error
+	r.line1, r.err = reader.ReadString('\n')
+	if r.err != nil {
+		return
 	}
 
-	r.line2, err = reader.ReadString('\n')
-	if err != nil {
-		//TODO: handle error
-	}
-
-	return err
+	r.line2, r.err = reader.ReadString('\n')
 }
