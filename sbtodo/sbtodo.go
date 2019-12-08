@@ -2,7 +2,6 @@
 package sbtodo
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"bufio"
@@ -82,23 +81,23 @@ func (r *Routine) String() string {
 	r.line1 = strings.TrimSpace(r.line1)
 	if len(r.line1) > 0 {
 		// We have content in the first line. Start by adding that.
-		fmt.Fprintf(&b, "%s", r.line1)
+		b.WriteString(r.line1)
 		if len(r.line2) > 0 {
 			// We have content in the second line as well. Let's find out which conjuction to use.
 			if (strings.HasPrefix(r.line2, "\t")) || (strings.HasPrefix(r.line2, " ")) {
-				fmt.Fprintf(&b, " -> ")
+				b.WriteString(" -> ")
 			} else {
-				fmt.Fprintf(&b, " | ")
+				b.WriteString(" | ")
 			}
-			fmt.Fprintf(&b, "%s", strings.TrimSpace(r.line2))
+			b.WriteString(strings.TrimSpace(r.line2))
 		}
 	} else {
 		if len(r.line2) > 0 {
 			// We only have a second line. Print only that.
-			fmt.Fprintf(&b, "%s", strings.TrimSpace(r.line2))
+			b.WriteString(strings.TrimSpace(r.line2))
 		} else {
 			// We don't have content in either line.
-			fmt.Fprintf(&b, "Finished")
+			b.WriteString("Finished")
 		}
 	}
 
