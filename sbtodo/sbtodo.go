@@ -81,17 +81,18 @@ func (r *Routine) String() string {
 		// We have content in the first line. Start by adding that.
 		b.WriteString(r.line1)
 		if len(r.line2) > 0 {
-			// We have content in the second line as well. Let's find out which conjuction to use.
+			// We have content in the second line as well. First, let's find out which joiner to use.
 			if (strings.HasPrefix(r.line2, "\t")) || (strings.HasPrefix(r.line2, " ")) {
 				b.WriteString(" -> ")
 			} else {
 				b.WriteString(" | ")
 			}
+			// Next, we'll add the second line.
 			b.WriteString(strings.TrimSpace(r.line2))
 		}
 	} else {
 		if len(r.line2) > 0 {
-			// We only have a second line. Print only that.
+			// We only have a second line. Print just that.
 			b.WriteString(strings.TrimSpace(r.line2))
 		} else {
 			// We don't have content in either line.
