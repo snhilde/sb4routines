@@ -104,7 +104,7 @@ func (r *Routine) String() string {
 }
 
 func (r *Routine) readFile() {
-	file *os.File
+	var file *os.File
 
 	file, r.err = os.Open(r.path)
 	if r.err != nil {
