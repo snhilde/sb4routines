@@ -9,11 +9,9 @@ import (
 
 // Routine is the main object for this package.
 // It contains the data obtained from the specified TODO file, including file info and a copy of the first 2 lines.
-// file will be the open file descriptor for the TODO file.
 type Routine struct {
 	path   string
 	info   os.FileInfo
-	file  *os.File
 	line1  string
 	line2  string
 	err    error
@@ -105,13 +103,15 @@ func (r *Routine) String() string {
 }
 
 func (r *Routine) readFile() {
-	r.file, r.err = os.Open(r.path)
+	file *os.File
+
+	file, r.err = os.Open(r.path)
 	if r.err != nil {
 		return
 	}
-	defer r.file.Close()
+	defer file.Close()
 
-	reader := bufio.NewReader(r.file)
+	reader := bufio.NewReader(file)
 
 	r.line1, r.err = reader.ReadString('\n')
 	r.line2, r.err = reader.ReadString('\n')
