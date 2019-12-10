@@ -3,7 +3,6 @@ package sbcpuusage
 import (
 	"fmt"
 	"os"
-	"time"
 	"strings"
 	"bufio"
 	"errors"
@@ -13,7 +12,7 @@ import (
 type Routine struct {
 	err       error
 	old_stats stats
-	perc      float64
+	perc      int
 }
 
 type stats struct {
@@ -37,7 +36,7 @@ func (r *Routine) Update() error {
 
 	used   := (new_stats.user-r.old_stats.user) + (new_stats.nice-r.old_stats.nice) + (new_stats.sys-r.old_stats.sys)
 	total  := (new_stats.user-r.old_stats.user) + (new_stats.nice-r.old_stats.nice) + (new_stats.sys-r.old_stats.sys) + (new_stats.idle-r.old_stats.idle)
-	r.perc  = float64(used * 100) / float64(total)
+	r.perc  = (used * 100) / total
 
 	r.old_stats.user = new_stats.user
 	r.old_stats.nice = new_stats.nice
@@ -48,11 +47,14 @@ func (r *Routine) Update() error {
 }
 
 func (r *Routine) String() string {
+	var b strings.Builder
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return "stub"
+	fmt.Fprintf(&b, "%2d%% CPU", r.perc)
+	return b.String()
 }
 
 // Open /proc/stat and read out the CPU stats.
