@@ -38,6 +38,11 @@ func (r *Routine) Update() error {
 	total := (new_stats.user-r.old_stats.user) + (new_stats.nice-r.old_stats.nice) + (new_stats.sys-r.old_stats.sys) + (new_stats.idle-r.old_stats.idle)
 	perc  := (used * 100) / total
 
+	r.old_stats.user = new_stats.user
+	r.old_stats.nice = new_stats.nice
+	r.old_stats.sys  = new_stats.sys
+	r.old_stats.idle = new_stats.idle
+
 	return nil
 }
 
