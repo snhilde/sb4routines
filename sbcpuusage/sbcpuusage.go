@@ -6,6 +6,7 @@ import (
 	"time"
 	"strings"
 	"bufio"
+	"errors"
 )
 
 // Routine is the main object for this package.
@@ -64,8 +65,8 @@ func (r *Routine) readFile() {
 		return
 	}
 
-	n, r.err = fmt.Sscanf(r.line, "cpu %v %v %v %v", &(r.old_stats.user), &(r.old_stats.nice), &(r.old_stats.sys), &(r.old_stats.idle))
-	if n != 4 || r.err != nil {
-		return
+	n, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(r.old_stats.user), &(r.old_stats.nice), &(r.old_stats.sys), &(r.old_stats.idle))
+	if r.err == nil && n != 4 {
+		r.err = errors.New("Failed to read all stats")
 	}
 }
