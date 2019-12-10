@@ -10,8 +10,8 @@ import (
 
 // Routine is the main object for this package.
 type Routine struct {
-	err  error
-	line string
+	err   error
+	line  string
 }
 
 func New() *Routine {
