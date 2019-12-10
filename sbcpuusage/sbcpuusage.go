@@ -11,7 +11,6 @@ import (
 // Routine is the main object for this package.
 type Routine struct {
 	err       error
-	line      string
 	old_stats stats
 	new_stats stats
 }
@@ -33,8 +32,6 @@ func (r *Routine) Update() error {
 		return r.err
 	}
 
-	r.scanFile()
-
 	return nil
 }
 
@@ -46,9 +43,13 @@ func (r *Routine) String() string {
 	return "stub"
 }
 
-// Open /proc/stat and read out the first line (combined CPU stats) of the file.
+// Open /proc/stat and read out the CPU stats.
 func (r *Routine) readFile() {
+	// The first line of /proc/stat will look like this:
+	// "cpu userVal niceVal sysVal idleVal ..."
 	var file *os.File
+	var line  string
+	var n     int
 
 	file, r.err = os.Open("/proc/stat")
 	if r.err != nil {
@@ -58,13 +59,10 @@ func (r *Routine) readFile() {
 
 	reader := bufio.NewReader(file)
 
-	r.line, r.err = reader.ReadString('\n')
-}
-
-func (r *Routine) scanFile() {
-	// The first line of /proc/stat will look like this:
-	// "cpu userVal niceVal sysVal idleVal ..."
-	var n int
+	line, r.err = reader.ReadString('\n')
+	if r.err != nil {
+		return
+	}
 
 	n, r.err = fmt.Sscanf(r.line, "cpu %v %v %v %v", &(r.old_stats.user), &(r.old_stats.nice), &(r.old_stats.sys), &(r.old_stats.idle))
 	if n != 4 || r.err != nil {
