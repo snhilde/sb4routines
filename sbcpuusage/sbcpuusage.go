@@ -22,6 +22,7 @@ func (r *Routine) Update() error {
 func (r *Routine) String() string {
 }
 
+// Open /proc/stat and read out the first line (combined CPU stats) of the file.
 func (r *Routine) readFile() {
 	var file *os.File
 
