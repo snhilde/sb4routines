@@ -65,7 +65,7 @@ func (r *Routine) readFile() {
 		return
 	}
 
-	n, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(r.old_stats.user), &(r.old_stats.nice), &(r.old_stats.sys), &(r.old_stats.idle))
+	n, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(r.new_stats.user), &(r.new_stats.nice), &(r.new_stats.sys), &(r.new_stats.idle))
 	if r.err == nil && n != 4 {
 		r.err = errors.New("Failed to read all stats")
 	}
