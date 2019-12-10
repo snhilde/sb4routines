@@ -24,6 +24,8 @@ func (r *Routine) Update() error {
 		return r.err
 	}
 
+	r.scanFile()
+
 	return nil
 }
 
@@ -48,4 +50,9 @@ func (r *Routine) readFile() {
 	reader := bufio.NewReader(file)
 
 	r.stats, r.err = reader.ReadString('\n')
+}
+
+func (r *Routine) scanFile() {
+	// The first line of /proc/stat will look like this:
+	// "cpu userVal niceVal sysVal idleVal ..."
 }
