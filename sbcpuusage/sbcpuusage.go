@@ -10,8 +10,8 @@ import (
 
 // Routine is the main object for this package.
 type Routine struct {
-	err   error
-	stats string
+	err  error
+	line string
 }
 
 func New() *Routine {
@@ -49,7 +49,7 @@ func (r *Routine) readFile() {
 
 	reader := bufio.NewReader(file)
 
-	r.stats, r.err = reader.ReadString('\n')
+	r.line, r.err = reader.ReadString('\n')
 }
 
 func (r *Routine) scanFile() {
