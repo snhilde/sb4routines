@@ -26,6 +26,9 @@ func (r *Routine) Update() error {
 }
 
 func (r *Routine) String() string {
+	if r.err != nil {
+		return r.err.Error()
+	}
 }
 
 // Open /proc/stat and read out the first line (combined CPU stats) of the file.
