@@ -13,7 +13,6 @@ import (
 type Routine struct {
 	err       error
 	old_stats stats
-	new_stats stats
 }
 
 type stats struct {
@@ -28,10 +27,15 @@ func New() *Routine {
 }
 
 func (r *Routine) Update() error {
-	r.readFile()
+	var new_stats stats
+
+	r.readFile(&new_stats)
 	if r.err != nil {
 		return r.err
 	}
+
+	used  := (new_stats.user-r.old_stats.user) + (new_stats.nice-r.old_stats.nice) + (new_stats.sys-r.old_stats.sys)
+	total := (new_stats.user-r.old_stats.user) + (new_stats.nice-r.old_stats.nice) + (new_stats.sys-r.old_stats.sys) + (new_stats.idle-r.old_stats.idle)
 
 	return nil
 }
@@ -45,7 +49,7 @@ func (r *Routine) String() string {
 }
 
 // Open /proc/stat and read out the CPU stats.
-func (r *Routine) readFile() {
+func (r *Routine) readFile(new_stats *stats) {
 	// The first line of /proc/stat will look like this:
 	// "cpu userVal niceVal sysVal idleVal ..."
 	var file *os.File
@@ -65,7 +69,7 @@ func (r *Routine) readFile() {
 		return
 	}
 
-	n, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(r.new_stats.user), &(r.new_stats.nice), &(r.new_stats.sys), &(r.new_stats.idle))
+	n, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(new_stats.user), &(new_stats.nice), &(new_stats.sys), &(new_stats.idle))
 	if r.err == nil && n != 4 {
 		r.err = errors.New("Failed to read all stats")
 	}
