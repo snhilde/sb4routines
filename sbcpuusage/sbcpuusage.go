@@ -19,6 +19,10 @@ func New() *Routine {
 }
 
 func (r *Routine) Update() error {
+	r.readFile()
+	if r.err != nil {
+		return r.err
+	}
 }
 
 func (r *Routine) String() string {
