@@ -17,10 +17,10 @@ type Routine struct {
 }
 
 type stats struct {
-	user   int
-	nice   int
-	system int
-	idle   int
+	user int
+	nice int
+	sys  int
+	idle int
 }
 
 func New() *Routine {
@@ -64,4 +64,10 @@ func (r *Routine) readFile() {
 func (r *Routine) scanFile() {
 	// The first line of /proc/stat will look like this:
 	// "cpu userVal niceVal sysVal idleVal ..."
+	var n int
+
+	n, r.err = fmt.Sscanf(r.line, "cpu %v %v %v %v", &(r.old_stats.user), &(r.old_stats.nice), &(r.old_stats.sys), &(r.old_stats.idle))
+	if n != 4 || r.err != nil {
+		return
+	}
 }
