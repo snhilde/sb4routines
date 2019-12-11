@@ -9,12 +9,17 @@ import (
 
 // Routine is the main object for this package.
 // It contains the data obtained from the specified TODO file, including file info and a copy of the first 2 lines.
+// err:   error encountered along the way, if any
+// path:  path to the TODO file
+// info:  TODO file info, as returned by os.Stat()
+// line1: first line of the TODO file
+// line2: second line of the TODO file
 type Routine struct {
+	err    error
 	path   string
 	info   os.FileInfo
 	line1  string
 	line2  string
-	err    error
 }
 
 // Return a new Routine object.
@@ -39,12 +44,7 @@ func New(path string) *Routine {
 	return &r
 }
 
- // Read in the given TODO list and format the output according to a few rules:
- //   1. If the file is empty, print "Finished".
- //   2. If the first line has content but the second line is empty, print only the first line.
- //   3. If the first line is empty but the second line has content, print only the second line.
- //   4. If the first line has content and the second line is indented, print "line1 -> line2".
- //   5. If both lines have content and both are flush, print "line1 | line2".
+// If the TODO file was modified since the last read, read it in again.
 func (r *Routine) Update() {
 	var new_info os.FileInfo
 
@@ -67,6 +67,12 @@ func (r *Routine) Update() {
 	r.info = new_info
 }
 
+// Format the first two lines of the file according to a few rules:
+ //   1. If the file is empty, print "Finished".
+ //   2. If the first line has content but the second line is empty, print only the first line.
+ //   3. If the first line is empty but the second line has content, print only the second line.
+ //   4. If the first line has content and the second line is indented, print "line1 -> line2".
+ //   5. If both lines have content and both are flush, print "line1 | line2".
 func (r *Routine) String() string {
 	var b strings.Builder
 
@@ -102,6 +108,7 @@ func (r *Routine) String() string {
 	return b.String()
 }
 
+// Grab the first two lines of the TODO file.
 func (r *Routine) readFile() {
 	var file *os.File
 
