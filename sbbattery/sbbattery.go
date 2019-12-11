@@ -33,6 +33,13 @@ func (r *Routine) Update() error {
 		return r.err
 	}
 
+	r.perc  = (now * 100) / r.max
+	if r.perc < 0 {
+		r.perc = 0
+	} else if r.perc > 100 {
+		r.perc = 100
+	}
+
 	return nil
 }
 
