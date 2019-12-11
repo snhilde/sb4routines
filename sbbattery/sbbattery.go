@@ -50,10 +50,7 @@ func (r *Routine) readFile(file string) int {
 	defer f.Close()
 
 	i, r.err = fmt.Fscan(f, &n)
-	if i != 1 || r.err != nil {
-		if r.err == nil {
-			r.err = errors.New("Failed to read file")
-		}
+	if r.err != nil {
 		return -1
 	}
 
