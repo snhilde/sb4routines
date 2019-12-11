@@ -20,17 +20,17 @@ func New() *Routine {
 	return &r
 }
 
-func (r *Routine) Update() error {
+func (r *Routine) Update() {
 	var now int
 
 	// Handle error reading max capacity.
 	if r.max == -1 {
-		return r.err
+		return
 	}
 
 	now = r.readFile("/sys/class/power_supply/BAT0/charge_now")
 	if r.err != nil {
-		return r.err
+		return
 	}
 
 	r.perc  = (now * 100) / r.max
@@ -39,8 +39,6 @@ func (r *Routine) Update() error {
 	} else if r.perc > 100 {
 		r.perc = 100
 	}
-
-	return nil
 }
 
 func (r *Routine) String() string {
