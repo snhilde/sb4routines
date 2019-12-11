@@ -3,9 +3,7 @@ package sbcpuusage
 import (
 	"fmt"
 	"os"
-	"strings"
 	"bufio"
-	"errors"
 )
 
 // Routine is the main object for this package.
@@ -62,14 +60,11 @@ func (r *Routine) Update() error {
 }
 
 func (r *Routine) String() string {
-	var b strings.Builder
-
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	fmt.Fprintf(&b, "%2d%% CPU", r.perc)
-	return b.String()
+	return fmt.Sprintf("%2d%% CPU", r.perc)
 }
 
 // Open /proc/stat and read out the CPU stats.
@@ -78,7 +73,6 @@ func (r *Routine) readFile(new_stats *stats) {
 	// "cpu userVal niceVal sysVal idleVal ..."
 	var file *os.File
 	var line  string
-	var n     int
 
 	file, r.err = os.Open("/proc/stat")
 	if r.err != nil {
@@ -93,8 +87,6 @@ func (r *Routine) readFile(new_stats *stats) {
 		return
 	}
 
-	n, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(new_stats.user), &(new_stats.nice), &(new_stats.sys), &(new_stats.idle))
-	if r.err == nil && n != 4 {
-		r.err = errors.New("Failed to read all stats")
-	}
+	// Error will be handled in String().
+	_, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(new_stats.user), &(new_stats.nice), &(new_stats.sys), &(new_stats.idle))
 }
