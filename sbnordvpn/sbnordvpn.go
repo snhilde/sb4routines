@@ -9,6 +9,7 @@ import (
 
 // Routine is the main object in the package.
 // err: any error encountered along the way, if any
+// b:   buffer to hold connnection string
 type Routine struct {
 	err error
 	b   strings.Builder
@@ -32,8 +33,7 @@ func (r *Routine) Update() {
 	r.parseCommand(string(out))
 }
 
-// Format and print the current connection status with this format:
-//
+// Format and print the current connection status.
 func (r *Routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
@@ -42,6 +42,7 @@ func (r *Routine) String() string {
 	return fmt.Sprintf("NordVPN: %s", r.b.String())
 }
 
+// Parse the command's output.
 func (r *Routine) parseCommand(s string) {
 	// If there is a connection to the VPN, the command will return this format:
 	//     Status: Connected
