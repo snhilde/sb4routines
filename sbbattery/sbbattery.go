@@ -5,12 +5,17 @@ import (
 	"fmt"
 )
 
+// Main type for package.
+// err:  error encountered along the way, if any
+// max:  maximum capacity of battery
+// perc: percentage of battery capacity left
 type Routine struct {
 	err  error
 	max  int
 	perc int
 }
 
+// Read the maximum capacity of the battery and return struct.
 func New() *Routine {
 	var r Routine
 
@@ -20,6 +25,7 @@ func New() *Routine {
 	return &r
 }
 
+// Read current capacity left and calculate percentage from that.
 func (r *Routine) Update() {
 	var now int
 
@@ -41,6 +47,7 @@ func (r *Routine) Update() {
 	}
 }
 
+// Print formatted percentage of battery left.
 func (r *Routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
@@ -49,6 +56,7 @@ func (r *Routine) String() string {
 	return fmt.Sprintf("%v%% BAT", r.perc)
 }
 
+// Read out value from file.
 func (r *Routine) readFile(file string) int {
 	var f *os.File
 	var n int
