@@ -24,5 +24,9 @@ func (r *Routine) Update() {
 }
 
 func (r *Routine) String() string {
+	if r.err != nil {
+		return r.err.Error()
+	}
+
 	return "nordvpn"
 }
