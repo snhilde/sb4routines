@@ -7,12 +7,16 @@ import (
 )
 
 // Routine is the main object for this package.
+// err:       error encountered along the way, if any
+// old_stats: CPU stats from last read
+// perc:      percentage of CPU currently being used
 type Routine struct {
 	err       error
 	old_stats stats
 	perc      int
 }
 
+// Type to hold values of different CPU stats
 type stats struct {
 	user int
 	nice int
@@ -20,6 +24,7 @@ type stats struct {
 	idle int
 }
 
+// Get current CPU stats and return Routine object.
 func New() *Routine {
 	var r Routine
 
@@ -28,6 +33,7 @@ func New() *Routine {
 	return &r
 }
 
+// Get current CPU stats, compare to last-read stats, and calculate percentage of CPU being used.
 func (r *Routine) Update() {
 	var new_stats stats
 
@@ -57,6 +63,7 @@ func (r *Routine) Update() {
 	r.old_stats.idle = new_stats.idle
 }
 
+// Print formatted CPU percentage.
 func (r *Routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
