@@ -47,6 +47,7 @@ func (r *Routine) readFile(file string) int {
 	if r.err != nil {
 		return -1
 	}
+	defer f.Close()
 
 	i, r.err = fmt.Fscan(f, &n)
 	if i != 1 || r.err != nil {
