@@ -15,3 +15,6 @@ func (r *Routine) Update() error {
 func (r *Routine) String() string {
 	return "battery"
 }
+
+func (r *Routine) readFile(file string) {
+}
