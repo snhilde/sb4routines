@@ -48,7 +48,7 @@ func (r *Routine) String() string {
 		return r.err.Error()
 	}
 
-	return "battery"
+	return fmt.Sprintf("%v%% BAT", r.perc)
 }
 
 func (r *Routine) readFile(file string) int {
