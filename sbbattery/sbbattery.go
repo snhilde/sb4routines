@@ -1,7 +1,7 @@
 package sbbattery
 
 import (
-	"ioutil"
+	"io/ioutil"
 )
 
 type Routine struct {
@@ -21,6 +21,11 @@ func (r *Routine) String() string {
 	return "battery"
 }
 
-func (r *Routine) readFile(file string) {
-	val := ioutil.ReadFile(file)
+func (r *Routine) readFile(file string) int {
+	var val []byte
+
+	val, r.err = ioutil.ReadFile(file)
+	if r.err != nil {
+		return -1
+	}
 }
