@@ -28,12 +28,12 @@ func New() *Routine {
 	return &r
 }
 
-func (r *Routine) Update() error {
+func (r *Routine) Update() {
 	var new_stats stats
 
 	r.readFile(&new_stats)
 	if r.err != nil {
-		return r.err
+		return
 	}
 
 	used   := (new_stats.user-r.old_stats.user) + (new_stats.nice-r.old_stats.nice) + (new_stats.sys-r.old_stats.sys)
@@ -55,8 +55,6 @@ func (r *Routine) Update() error {
 	r.old_stats.nice = new_stats.nice
 	r.old_stats.sys  = new_stats.sys
 	r.old_stats.idle = new_stats.idle
-
-	return nil
 }
 
 func (r *Routine) String() string {
