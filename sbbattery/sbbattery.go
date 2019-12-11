@@ -3,7 +3,6 @@ package sbbattery
 import (
 	"os"
 	"fmt"
-	"errors"
 )
 
 type Routine struct {
@@ -27,6 +26,11 @@ func (r *Routine) Update() error {
 		return r.err
 	}
 
+	r.charge = r.readFile("/sys/class/power_supply/BAT0/charge_now")
+	if r.err != nil {
+		return r.err
+	}
+
 	return nil
 }
 
@@ -40,7 +44,6 @@ func (r *Routine) String() string {
 
 func (r *Routine) readFile(file string) int {
 	var f *os.File
-	var i int
 	var n int
 
 	f, r.err = os.Open(file)
@@ -49,7 +52,7 @@ func (r *Routine) readFile(file string) int {
 	}
 	defer f.Close()
 
-	i, r.err = fmt.Fscan(f, &n)
+	_, r.err = fmt.Fscan(f, &n)
 	if r.err != nil {
 		return -1
 	}
