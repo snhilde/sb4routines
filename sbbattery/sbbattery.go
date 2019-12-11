@@ -6,9 +6,9 @@ import (
 )
 
 type Routine struct {
-	err    error
-	charge int
-	max    int
+	err  error
+	max  int
+	perc int
 }
 
 func New() *Routine {
@@ -21,12 +21,14 @@ func New() *Routine {
 }
 
 func (r *Routine) Update() error {
+	var now int
+
 	// Handle error reading max capacity.
 	if r.max == -1 {
 		return r.err
 	}
 
-	r.charge = r.readFile("/sys/class/power_supply/BAT0/charge_now")
+	now = r.readFile("/sys/class/power_supply/BAT0/charge_now")
 	if r.err != nil {
 		return r.err
 	}
