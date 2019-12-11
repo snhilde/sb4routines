@@ -41,4 +41,10 @@ func (r *Routine) String() string {
 }
 
 func (r *Routine) parseCommand(s string) {
+	lines := strings.Split(s, "\n");
+
+	// Possible entries for the first line:
+	//     Status: Connected
+	//     Status: Disconnected
+	//     Please check your internet connection and try again.
 }
