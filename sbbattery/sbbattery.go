@@ -1,6 +1,11 @@
 package sbbattery
 
+import (
+	"os"
+)
+
 type Routine struct {
+	err    error
 	charge int
 }
 
@@ -17,4 +22,7 @@ func (r *Routine) String() string {
 }
 
 func (r *Routine) readFile(file string) {
+	var f *os.File
+
+	f, r.err = os.Open(file)
 }
