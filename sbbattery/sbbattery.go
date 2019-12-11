@@ -1,7 +1,9 @@
 package sbbattery
 
 import (
-	"io/ioutil"
+	"os"
+	"fmt"
+	"errors"
 )
 
 type Routine struct {
@@ -37,10 +39,22 @@ func (r *Routine) String() string {
 }
 
 func (r *Routine) readFile(file string) int {
-	var val []byte
+	var f *os.File
+	var i int
+	var n int
 
-	val, r.err = ioutil.ReadFile(file)
+	f, r.err = os.Open(file)
 	if r.err != nil {
 		return -1
 	}
+
+	i, r.err = fmt.Fscan(f, &n)
+	if i != 1 || r.err != nil {
+		if r.err == nil {
+			r.err = errors.New("Failed to read file")
+		}
+		return -1
+	}
+
+	return n
 }
