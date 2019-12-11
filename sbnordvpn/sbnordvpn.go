@@ -39,7 +39,7 @@ func (r *Routine) String() string {
 		return r.err.Error()
 	}
 
-	return "nordvpn"
+	return fmt.Sprintf("NordVPN: %s", r.b.String())
 }
 
 func (r *Routine) parseCommand(s string) {
