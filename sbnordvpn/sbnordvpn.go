@@ -59,14 +59,23 @@ func (r *Routine) parseCommand(s string) {
 	//
 	// If there is no Internet connection, the command will return this:
 	//     Please check your internet connection and try again.
-	r.b.Reset()
+	var city string
 
 	lines := strings.Split(s, "\n");
 	if lines[0] == "Status: Connected" {
+		_, r.err = fmt.Sscanf(lines[3], "City: %s", &city)
+		if r.err == nil {
+			r.b.Reset()
+			r.b.WriteString("Connected: ")
+			r.b.WriteString(city)
+		}
+
 	} else if lines[0] == "Status: Disconnected" {
-		r.b.WriteString("Disconnected")
+		r.err = errors.New("Disconnected")
+
 	} else if lines[0] == "Please check your internet connection and try again." {
-		r.b.WriteString("Internet Down")
+		r.err = errors.New("Internet Down")
+
 	} else {
 		r.err = errors.New(lines[0])
 	}
