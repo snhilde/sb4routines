@@ -41,10 +41,22 @@ func (r *Routine) String() string {
 }
 
 func (r *Routine) parseCommand(s string) {
-	lines := strings.Split(s, "\n");
-
-	// Possible entries for the first line:
+	// If there is a connection to the VPN, the command will return this format:
 	//     Status: Connected
+	//     Current server: <server.url>
+	//     Country: <country>
+	//     City: <city>
+	//     Your new IP: <the.new.IP.address>
+	//     Current technology: <tech>
+	//     Current protocol: <protocol>
+	//     Transfer: <bytes> <unit> received, <bytes> <unit> sent
+	//     Uptime: <human-readable time>
+	//
+	// If there is no connection, the command will return this:
 	//     Status: Disconnected
+	//
+	// If there is no Internet connection, the command will return this:
 	//     Please check your internet connection and try again.
+
+	lines := strings.Split(s, "\n");
 }
