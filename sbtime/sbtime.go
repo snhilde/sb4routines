@@ -18,10 +18,8 @@ func New() *Routine {
 }
 
 // Update the routine's current time.
-func (r *Routine) Update() error {
+func (r *Routine) Update() {
 	r.time = time.Now()
-
-	return nil
 }
 
 // Print the time in this format: MM D - HH:MM".
