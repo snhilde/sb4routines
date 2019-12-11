@@ -3,6 +3,7 @@ package sbnordvpn
 import (
 	"os/exec"
 	"fmt"
+	"strings"
 )
 
 // Routine is the main object in the package.
@@ -25,6 +26,8 @@ func (r *Routine) Update() {
 	if r.err != nil {
 		return
 	}
+
+	r.parseCommand(string(out))
 }
 
 // Format and print the current connection status with this format:
@@ -35,4 +38,7 @@ func (r *Routine) String() string {
 	}
 
 	return "nordvpn"
+}
+
+func (r *Routine) parseCommand(s string) {
 }
