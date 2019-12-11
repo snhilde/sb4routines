@@ -1,10 +1,12 @@
 package sbnordvpn
 
 import (
+	"os/exec"
+	"fmt"
 )
 
 type Routine struct {
-	n int
+	err error
 }
 
 func New() *Routine {
@@ -12,6 +14,13 @@ func New() *Routine {
 }
 
 func (r *Routine) Update() {
+	var out []byte
+
+	proc       := exec.Command("nordvpn", "status")
+	out, r.err  = proc.Output()
+	if r.err != nil {
+		return
+	}
 }
 
 func (r *Routine) String() string {
