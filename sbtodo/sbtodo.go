@@ -45,12 +45,12 @@ func New(path string) *Routine {
  //   3. If the first line is empty but the second line has content, print only the second line.
  //   4. If the first line has content and the second line is indented, print "line1 -> line2".
  //   5. If both lines have content and both are flush, print "line1 | line2".
-func (r *Routine) Update() error {
+func (r *Routine) Update() {
 	var new_info os.FileInfo
 
 	new_info, r.err = os.Stat(r.path)
 	if r.err != nil {
-		return r.err
+		return
 	}
 
 	// If mtime is not newer than what we already have, we can skip reading the file.
@@ -60,12 +60,11 @@ func (r *Routine) Update() error {
 		// The file was modified. Let's parse it.
 		r.readFile()
 		if r.err != nil {
-			return r.err
+			return
 		}
 	}
 
 	r.info = new_info
-	return nil
 }
 
 func (r *Routine) String() string {
