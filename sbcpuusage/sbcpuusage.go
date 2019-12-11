@@ -45,7 +45,7 @@ func (r *Routine) Update() error {
 	if total == 0 {
 		r.perc = 0
 	} else {
-		r.perc  = (used * 100) / total
+		r.perc = (used * 100) / total
 		if r.perc < 0 {
 			r.perc = 0
 		} else if r.perc > 100 {
