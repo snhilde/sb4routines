@@ -11,7 +11,7 @@ type Routine struct {
 	time time.Time
 }
 
-// Create a new Routine object.
+// Create a new Routine object and get the current time.
 func New() *Routine {
 	r := Routine{time: time.Now()}
 	return &r
