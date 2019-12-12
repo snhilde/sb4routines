@@ -12,6 +12,7 @@ const base_dir = "/sys/class/hwmon/"
 type Routine struct {
 	err  error
 	path string
+	file string
 }
 
 func New() *Routine {
@@ -47,8 +48,8 @@ func (r *Routine) findFile() {
 
 	// Search in each device directory to find the fan.
 	for _, dir := range dirs {
-		path := base_dir + dir.Name() + "/device"
-		files, r.err = ioutil.ReadDir(path)
+		r.path = base_dir + dir.Name() + "/device"
+		files, r.err = ioutil.ReadDir(r.path)
 		if r.err != nil {
 			return
 		}
@@ -57,18 +58,18 @@ func (r *Routine) findFile() {
 		for _, file := range files {
 			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), "input") {
 				// We found it.
-				r.path = path
+				r.file = file.Name()
 				break;
 			}
 		}
-		if r.path != "" {
+		if r.file != "" {
 			// We found our path. We can stop looking.
 			break;
 		}
 	}
 
 	// Make sure we found something.
-	if r.path == "" {
+	if r.file == "" {
 		r.err = errors.New("No fan file")
 	}
 }
