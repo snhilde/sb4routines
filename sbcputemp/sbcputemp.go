@@ -59,7 +59,11 @@ func (r *Routine) Update() {
 		r.temp += n
 	}
 
+	// Get the average temp across all readings.
 	r.temp /= len(r.files)
+
+	// Convert to degrees Celsius.
+	r.temp /= 1000
 }
 
 func (r *Routine) String() string {
