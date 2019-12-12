@@ -119,6 +119,10 @@ func numThreads() (int, error) {
 	lines := strings.Split(string(out), "\n")
 	for _, line := range lines {
 		if strings.HasPrefix(line, "Thread(s) per core") {
+			fields := strings.Split(line)
+			if len(fields) != 2 {
+				return -1, errors.New("Invalid fields")
+			}
 		}
 	}
 }
