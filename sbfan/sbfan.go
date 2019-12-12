@@ -47,15 +47,17 @@ func (r *Routine) findFile() {
 
 	// Search in each device directory to find the fan.
 	for _, dir := range dirs {
-		r.path = base_dir + dir.Name() + "/device"
-		files, r.err = ioutil.ReadDir(r.path)
+		path := base_dir + dir.Name() + "/device"
+		files, r.err = ioutil.ReadDir(path)
 		if r.err != nil {
 			return
 		}
+
 		// Find the first file that has a name match. The file we want will start with "fan" and end with "input".
 		for _, file := range files {
 			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), "input") {
 				// We found it.
+				r.path = path
 				break;
 			}
 		}
