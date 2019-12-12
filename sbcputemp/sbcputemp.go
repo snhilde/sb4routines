@@ -1,6 +1,7 @@
 package sbcputemp
 
 import (
+	"fmt"
 	"os"
 	"io/ioutil"
 	"strings"
@@ -14,25 +15,51 @@ type Routine struct {
 	err   error
 	path  string
 	files []os.FileInfo
+	temp  int
 }
 
 func New() *Routine {
 	var r Routine
 
+	// Error will be handled in Update() and String().
 	r.path, r.err = findDir()
 	if r.err != nil {
 		return &r
 	}
 
+	// Error will be handled in Update() and String().
 	r.files, r.err = findFiles(r.path)
 
 	return &r
 }
 
 func (r *Routine) Update() {
+	var f *os.File
+	var n int
+
 	if r.err != nil {
 		return
 	}
+
+	r.temp = 0
+	for _, file := range r.files {
+		f, r.err = os.Open(r.path + file.Name())
+		if r.err != nil {
+			r.temp = 0
+			return
+		}
+
+		_, r.err = fmt.Fscan(f, &n)
+		f.Close()
+		if r.err != nil {
+			r.temp = 0
+			return
+		}
+
+		r.temp += n
+	}
+
+	r.temp /= len(r.files)
 }
 
 func (r *Routine) String() string {
