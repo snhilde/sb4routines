@@ -4,6 +4,7 @@ import (
 	"os"
 	"io/ioutil"
 	"strings"
+	"errors"
 )
 
 const base_dir = "/sys/class/hwmon"
@@ -14,7 +15,11 @@ type Routine struct {
 }
 
 func New() *Routine {
-	return new(Routine)
+	var r Routine
+
+	r.findFile()
+
+	return &r
 }
 
 func (r *Routine) Update() {
@@ -58,5 +63,10 @@ func (r *Routine) findFile() {
 			// We found our path. We can stop looking.
 			break;
 		}
+	}
+
+	// Make sure we found something.
+	if r.path == "" {
+		r.err = errors.New("No fan file")
 	}
 }
