@@ -19,7 +19,7 @@ type Routine struct {
 func New() *Routine {
 	var r Routine
 
-	r.path = r.findDir()
+	r.path, r.err = findDir()
 	if r.err != nil {
 		return &r
 	}
@@ -43,34 +43,30 @@ func (r *Routine) String() string {
 
 // Find the directory that has the temperature readings. It will be the one with the fan speeds,
 // somewhere in /sys/class/hwmon.
-func (r *Routine) findDir() string {
-	var dirs  []os.FileInfo
-	var files []os.FileInfo
-
+func findDir() (string, error) {
 	// Get all the device directories in the main directory.
-	dirs, r.err = ioutil.ReadDir(base_dir)
-	if r.err != nil {
-		return ""
+	dirs, err := ioutil.ReadDir(base_dir)
+	if err != nil {
+		return "", err
 	}
 
 	// Search in each device directory to find the fan.
 	for _, dir := range dirs {
 		path := base_dir + dir.Name() + "/device/"
-		files, r.err = ioutil.ReadDir(path)
-		if r.err != nil {
-			return ""
+		files, err := ioutil.ReadDir(path)
+		if err != nil {
+			return "", err
 		}
 
 		// If we encounter a file that matches "fan.*output", then we have the right directory.
 		for _, file := range files {
 			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), "output") {
 				// We found our directory. Return the path.
-				return path
+				return path, nil
 			}
 		}
 	}
 
 	// If we made it here, then we didn't find anything.
-	r.err = errors.New("No fan file")
-	return ""
+	return "", errors.New("No fan file")
 }
