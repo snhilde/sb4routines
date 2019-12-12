@@ -2,6 +2,8 @@ package sbcpuusage
 
 import (
 	"os/exec"
+	"strings"
+	"errors"
 	"fmt"
 	"os"
 	"bufio"
@@ -113,4 +115,6 @@ func numThreads() (int, error) {
 	if err != nil {
 		return -1, errors.New("Error running 'lscpu'")
 	}
+
+	lines := strings.Split(string(out), "\n")
 }
