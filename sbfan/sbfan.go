@@ -12,12 +12,17 @@ const base_dir = "/sys/class/hwmon/"
 type Routine struct {
 	err  error
 	path string
+	max  int
 }
 
 func New() *Routine {
 	var r Routine
 
+	// Find the max fan speed file and read its value.
 	max_file := r.findFile()
+	if r.err == nil {
+		r.max := r.readSpeed(max_file)
+	}
 
 	return &r
 }
@@ -69,4 +74,7 @@ func (r *Routine) findFile() os.FileInfo {
 	// If we made it here, then we didn't find anything.
 	r.err = errors.New("No fan file")
 	return nil
+}
+
+func (r *Routine) readSpeed(file os.FileInfo) int {
 }
