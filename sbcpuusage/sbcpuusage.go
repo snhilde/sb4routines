@@ -1,6 +1,7 @@
 package sbcpuusage
 
 import (
+	"os/exec"
 	"fmt"
 	"os"
 	"bufio"
@@ -12,7 +13,7 @@ import (
 // perc:      percentage of CPU currently being used
 type Routine struct {
 	err       error
-	cores     int
+	threads   int
 	old_stats stats
 	perc      int
 }
@@ -29,7 +30,7 @@ type stats struct {
 func New() *Routine {
 	var r Routine
 
-	r.cores, r.err = numCores()
+	r.threads, r.err = numThreads()
 	if r.err != nil {
 		return &r
 	}
@@ -105,6 +106,8 @@ func (r *Routine) readFile(new_stats *stats) {
 // The shell command 'lscpu' will return a variety of CPU information, including the number of threads
 // per CPU core. We don't care about the number of cores, because we're already reading in the
 // averaged total. We only want to know if we need to be changing its range. To get this number, we're
-// going to loop through each line of the output until we find "Core(s) per socket".
-func numCores() (int, error) {
+// going to loop through each line of the output until we find "Thread(s) per socket".
+func numThreads() (int, error) {
+	proc       := exec.Command("lscpu")
+	out, r.err  = proc.Output()
 }
