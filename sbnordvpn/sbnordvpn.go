@@ -2,7 +2,6 @@ package sbnordvpn
 
 import (
 	"os/exec"
-	"fmt"
 	"strings"
 	"errors"
 )
@@ -36,10 +35,10 @@ func (r *Routine) Update() {
 // Format and print the current connection status.
 func (r *Routine) String() string {
 	if r.err != nil {
-		return r.err.Error()
+		return "NordVPN: " + r.err.Error()
 	}
 
-	return fmt.Sprintf("NordVPN: %s", r.b.String())
+	return r.b.String()
 }
 
 // Parse the command's output.
@@ -60,15 +59,20 @@ func (r *Routine) parseCommand(s string) {
 	//
 	// If there is no Internet connection, the command will return this:
 	//     Please check your internet connection and try again.
-	var city string
-
 	lines := strings.Split(s, "\n");
 	if lines[0] == "Status: Connected" {
-		_, r.err = fmt.Sscanf(lines[3], "City: %s", &city)
-		if r.err == nil {
-			r.b.Reset()
-			r.b.WriteString("Connected: ")
-			r.b.WriteString(city)
+		for _, line := range lines {
+			if strings.HasPrefix(line, "City") {
+				fields := strings.Split(line, ":")
+				if len(fields) != 2 {
+					r.err = errors.New("Error parsing City")
+				} else {
+					r.b.Reset()
+					r.b.WriteString("Connected: ")
+					r.b.WriteString(strings.TrimSpace(fields[1]))
+				}
+				break;
+			}
 		}
 
 	} else if lines[0] == "Status: Disconnected" {
