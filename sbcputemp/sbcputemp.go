@@ -73,5 +73,7 @@ func findDir() (string, error) {
 	return "", errors.New("No fan file")
 }
 
+// Go through given path and build list of files that contain a temperature reading.
+// These files will begin with "temp" and end with "input".
 func findFiles(path string) ([]os.FileInfo, error) {
 }
