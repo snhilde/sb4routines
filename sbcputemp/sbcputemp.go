@@ -131,7 +131,7 @@ func findFiles(path string) ([]os.FileInfo, error) {
 
 	// Make sure we found something.
 	if len(b) == 0 {
-		return nil, errors.New("No temp files")
+		return nil, errors.New("No temperature files")
 	}
 
 	return b, nil
