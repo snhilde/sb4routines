@@ -24,6 +24,8 @@ func New() *Routine {
 		return &r
 	}
 
+	r.files, r.err = findFiles(r.path)
+
 	return &r
 }
 
@@ -69,4 +71,7 @@ func findDir() (string, error) {
 
 	// If we made it here, then we didn't find anything.
 	return "", errors.New("No fan file")
+}
+
+func findFiles(path string) ([]os.FileInfo, error) {
 }
