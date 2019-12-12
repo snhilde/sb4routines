@@ -129,6 +129,10 @@ func numThreads() (int, error) {
 			if err != nil {
 				return -1, err
 			}
+			return n, nil
 		}
 	}
+
+	// If we made it this far, then we didn't find anything.
+	return -1, errors.New("Failed to find number of threads")
 }
