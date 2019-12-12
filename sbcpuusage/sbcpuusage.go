@@ -114,7 +114,7 @@ func numThreads() (int, error) {
 	proc     := exec.Command("lscpu")
 	out, err := proc.Output()
 	if err != nil {
-		return -1, errors.New("Error running 'lscpu'")
+		return -1, err
 	}
 
 	lines := strings.Split(string(out), "\n")
@@ -127,7 +127,7 @@ func numThreads() (int, error) {
 			s      := strings.TrimSpace(fields[1])
 			n, err := strconv.Atoi(s)
 			if err != nil {
-				return -1, errors.New("Error converting number")
+				return -1, err
 			}
 		}
 	}
