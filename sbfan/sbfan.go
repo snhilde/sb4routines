@@ -19,7 +19,7 @@ func New() *Routine {
 	var r Routine
 
 	// Find the max fan speed file and read its value.
-	max_file := r.findFile()
+	max_file := r.findFile("max")
 	if r.err == nil {
 		r.max := r.readSpeed(max_file)
 	}
@@ -43,7 +43,7 @@ func (r *Routine) String() string {
 
 // Find the file that we'll monitor for the fan speed.
 // It will be in one of the hardware device directories in /sys/class/hwmon.
-func (r *Routine) findFile() os.FileInfo {
+func (r *Routine) findFile(filename string) os.FileInfo {
 	var dirs  []os.FileInfo
 	var files []os.FileInfo
 
@@ -61,9 +61,9 @@ func (r *Routine) findFile() os.FileInfo {
 			return nil
 		}
 
-		// Find the first file that has a name match. The file we want will start with "fan" and end with "input".
+		// Find the first file that has a name match. The file we want will start with "fan" and end with arg "filename".
 		for _, file := range files {
-			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), "max") {
+			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), filename) {
 				// We found it.
 				r.path = path
 				return file
