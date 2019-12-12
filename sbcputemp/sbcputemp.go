@@ -3,14 +3,17 @@ package sbcputemp
 import (
 	"os"
 	"io/ioutil"
+	"strings"
+	"errors"
 )
 
 // We need to root around in this directory for the device directory for the fan.
 const base_dir = "/sys/class/hwmon/"
 
 type Routine struct {
-	err  error
-	path string
+	err   error
+	path  string
+	files []os.FileInfo
 }
 
 func New() *Routine {
