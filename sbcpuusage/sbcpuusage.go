@@ -102,5 +102,9 @@ func (r *Routine) readFile(new_stats *stats) {
 	_, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(new_stats.user), &(new_stats.nice), &(new_stats.sys), &(new_stats.idle))
 }
 
+// The shell command 'lscpu' will return a variety of CPU information, including the number of threads
+// per CPU core. We don't care about the number of cores, because we're already reading in the
+// averaged total. We only want to know if we need to be changing its range. To get this number, we're
+// going to loop through each line of the output until we find "Core(s) per socket".
 func numCores() (int, error) {
 }
