@@ -5,6 +5,9 @@ import (
 	"io/ioutil"
 )
 
+// We need to root around in this directory for the device directory for the fan.
+const base_dir = "/sys/class/hwmon/"
+
 type Routine struct {
 	err  error
 	path string
