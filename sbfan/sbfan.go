@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-// We need to route around in this directory for the device directory for the fan.
+// We need to root around in this directory for the device directory for the fan.
 const base_dir = "/sys/class/hwmon/"
 
 // Routine is the main object for this package.
