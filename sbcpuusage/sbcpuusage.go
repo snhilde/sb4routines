@@ -12,6 +12,7 @@ import (
 // perc:      percentage of CPU currently being used
 type Routine struct {
 	err       error
+	cores     int
 	old_stats stats
 	perc      int
 }
@@ -27,6 +28,11 @@ type stats struct {
 // Get current CPU stats and return Routine object.
 func New() *Routine {
 	var r Routine
+
+	r.cores, r.err = getCores()
+	if r.err != nil {
+		return &r
+	}
 
 	r.readFile(&(r.old_stats))
 
