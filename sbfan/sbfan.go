@@ -12,19 +12,18 @@ const base_dir = "/sys/class/hwmon/"
 type Routine struct {
 	err  error
 	path string
-	file string
 }
 
 func New() *Routine {
 	var r Routine
 
-	r.findFile()
+	max_file := r.findFile()
 
 	return &r
 }
 
 func (r *Routine) Update() {
-	if r.file == "" {
+	if r.path == "" {
 		return
 	}
 }
@@ -39,40 +38,35 @@ func (r *Routine) String() string {
 
 // Find the file that we'll monitor for the fan speed.
 // It will be in one of the hardware device directories in /sys/class/hwmon.
-func (r *Routine) findFile() {
+func (r *Routine) findFile() os.FileInfo {
 	var dirs  []os.FileInfo
 	var files []os.FileInfo
 
 	// Get all the device directories in the main directory.
 	dirs, r.err = ioutil.ReadDir(base_dir)
 	if r.err != nil {
-		return
+		return nil
 	}
 
 	// Search in each device directory to find the fan.
 	for _, dir := range dirs {
-		r.path = base_dir + dir.Name() + "/device"
-		files, r.err = ioutil.ReadDir(r.path)
+		path := base_dir + dir.Name() + "/device"
+		files, r.err = ioutil.ReadDir(path)
 		if r.err != nil {
-			return
+			return nil
 		}
 
 		// Find the first file that has a name match. The file we want will start with "fan" and end with "input".
 		for _, file := range files {
 			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), "max") {
 				// We found it.
-				r.file = file.Name()
-				break;
+				r.path = path
+				return file
 			}
-		}
-		if r.file != "" {
-			// We found our path. We can stop looking.
-			break;
 		}
 	}
 
-	// Make sure we found something.
-	if r.file == "" {
-		r.err = errors.New("No fan file")
-	}
+	// If we made it here, then we didn't find anything.
+	r.err = errors.New("No fan file")
+	return nil
 }
