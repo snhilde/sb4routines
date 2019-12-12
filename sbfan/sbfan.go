@@ -16,6 +16,8 @@ type Routine struct {
 	max_file os.FileInfo
 	out_file os.FileInfo
 	max      int
+	out      int
+	perc     int
 }
 
 func New() *Routine {
@@ -27,6 +29,7 @@ func New() *Routine {
 		return &r
 	}
 
+	// Error will be handled later in Update() and String().
 	r.max = r.readSpeed(r.max_file)
 
 	return &r
@@ -36,6 +39,16 @@ func (r *Routine) Update() {
 	if r.err != nil {
 		return
 	}
+
+	r.out = r.readSpeed(r.out_file)
+	if r.err != nil {
+		return
+	}
+
+	r.perc = (r.out * 100) / r.max
+	if r.perc > 100 {
+		r.perc = 100
+	}
 }
 
 func (r *Routine) String() string {
@@ -43,7 +56,7 @@ func (r *Routine) String() string {
 		return r.err.Error()
 	}
 
-	return r.path
+	return fmt.Sprintf("%v RPM", r.out)
 }
 
 // Find the file that we'll monitor for the fan speed.
