@@ -8,8 +8,17 @@ import (
 	"fmt"
 )
 
+// We need to route around in this directory for the device directory for the fan.
 const base_dir = "/sys/class/hwmon/"
 
+// Routine is the main object for this package.
+// err:      error encountered along the way, if any
+// path:     found path to the device directory
+// max_file: file that contains the maximum speed of the fan, in RPM
+// out_file: file that contains the current speed of the fan, in RPM
+// max:      maximum speed of the fan, in RPM
+// out:      current speed of the fan, in RPM
+// perc:     percentage of maximum fan speed
 type Routine struct {
 	err      error
 	path     string
@@ -20,6 +29,7 @@ type Routine struct {
 	perc     int
 }
 
+// Search around in the base directory for a pair of max and current files, and return a new Routine object.
 func New() *Routine {
 	var r Routine
 
@@ -35,6 +45,7 @@ func New() *Routine {
 	return &r
 }
 
+// Read the current fan speed in RPM and calculate the percentage of the maximum speed.
 func (r *Routine) Update() {
 	if r.err != nil {
 		return
@@ -51,6 +62,7 @@ func (r *Routine) Update() {
 	}
 }
 
+// Print the formatted current speed in RPM.
 func (r *Routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
@@ -109,6 +121,7 @@ func (r *Routine) findFiles() {
 	return
 }
 
+// Read the value of the passed-in file, which will be a speed in RPM.
 func (r *Routine) readSpeed(file os.FileInfo) int {
 	var f *os.File
 	var n int
