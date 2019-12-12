@@ -108,6 +108,9 @@ func (r *Routine) readFile(new_stats *stats) {
 // averaged total. We only want to know if we need to be changing its range. To get this number, we're
 // going to loop through each line of the output until we find "Thread(s) per socket".
 func numThreads() (int, error) {
-	proc       := exec.Command("lscpu")
-	out, r.err  = proc.Output()
+	proc     := exec.Command("lscpu")
+	out, err := proc.Output()
+	if err != nil {
+		return -1, errors.New("Error running 'lscpu'")
+	}
 }
