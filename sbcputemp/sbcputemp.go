@@ -2,21 +2,36 @@ package sbcputemp
 
 import (
 	"os"
-	"ioutil"
+	"io/ioutil"
 )
 
 type Routine struct {
-	temp int
+	err  error
+	path string
 }
 
 func New() *Routine {
-	return new(Routine)
+	var r Routine
+
+	r.path = r.findDir()
+	if r.err != nil {
+		return &r
+	}
+
+	return &r
 }
 
 func (r *Routine) Update() {
+	if r.err != nil {
+		return
+	}
 }
 
 func (r *Routine) String() string {
+	if r.err != nil {
+		return r.err.Error()
+	}
+
 	return "cpu temp"
 }
 
