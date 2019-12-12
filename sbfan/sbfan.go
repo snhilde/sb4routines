@@ -24,6 +24,9 @@ func New() *Routine {
 }
 
 func (r *Routine) Update() {
+	if r.file == "" {
+		return
+	}
 }
 
 func (r *Routine) String() string {
