@@ -76,4 +76,19 @@ func findDir() (string, error) {
 // Go through given path and build list of files that contain a temperature reading.
 // These files will begin with "temp" and end with "input".
 func findFiles(path string) ([]os.FileInfo, error) {
+	var b []os.FileInfo
+
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return b, err
+	}
+
+	for _, file := range files {
+		if strings.HasPrefix(file.Name(), "temp") && strings.HasSuffix(file.Name(), "input") {
+			// We found a temperature reading. Add it to the list.
+			b = append(b, file)
+		}
+	}
+
+	return b, nil
 }
