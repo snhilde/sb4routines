@@ -74,8 +74,8 @@ func (r *Routine) String() string {
 // Find the file that we'll monitor for the fan speed.
 // It will be in one of the hardware device directories in /sys/class/hwmon.
 func (r *Routine) findFiles() {
-	var dirs   []os.FileInfo
-	var files  []os.FileInfo
+	var dirs  []os.FileInfo
+	var files []os.FileInfo
 
 	// Get all the device directories in the main directory.
 	dirs, r.err = ioutil.ReadDir(base_dir)
