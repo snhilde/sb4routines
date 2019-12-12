@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"errors"
+	"fmt"
 )
 
 const base_dir = "/sys/class/hwmon/"
@@ -22,9 +23,11 @@ func New() *Routine {
 
 	// Find the max fan speed file and read its value.
 	r.findFiles()
-	if r.err == nil {
-		r.max = r.readSpeed(r.max_file)
+	if r.err != nil {
+		return &r
 	}
+
+	r.max = r.readSpeed(r.max_file)
 
 	return &r
 }
@@ -57,7 +60,7 @@ func (r *Routine) findFiles() {
 
 	// Search in each device directory to find the fan.
 	for _, dir := range dirs {
-		path := base_dir + dir.Name() + "/device"
+		path := base_dir + dir.Name() + "/device/"
 		files, r.err = ioutil.ReadDir(path)
 		if r.err != nil {
 			return
@@ -94,4 +97,19 @@ func (r *Routine) findFiles() {
 }
 
 func (r *Routine) readSpeed(file os.FileInfo) int {
+	var f *os.File
+	var n int
+
+	f, r.err = os.Open(r.path + file.Name())
+	if r.err != nil {
+		return -1
+	}
+	defer f.Close()
+
+	_, r.err = fmt.Fscan(f, &n)
+	if r.err != nil {
+		return -1
+	}
+
+	return n
 }
