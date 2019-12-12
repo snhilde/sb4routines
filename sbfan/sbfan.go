@@ -33,7 +33,7 @@ func New() *Routine {
 }
 
 func (r *Routine) Update() {
-	if r.path == "" {
+	if r.err != nil {
 		return
 	}
 }
