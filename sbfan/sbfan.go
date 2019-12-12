@@ -47,7 +47,7 @@ func (r *Routine) findFile() {
 
 	// Search in each device directory to find the fan.
 	for _, dir := range dirs {
-		files, r.err = ioutil.ReadDir(base_dir + dir.Name())
+		files, r.err = ioutil.ReadDir(base_dir + "/" + dir.Name())
 		if r.err != nil {
 			return
 		}
