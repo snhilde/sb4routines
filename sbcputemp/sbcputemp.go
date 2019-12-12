@@ -71,7 +71,7 @@ func (r *Routine) String() string {
 		return r.err.Error()
 	}
 
-	return "cpu temp"
+	return fmt.Sprintf("%v °C", r.temp)
 }
 
 // Find the directory that has the temperature readings. It will be the one with the fan speeds,
