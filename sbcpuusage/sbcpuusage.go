@@ -29,7 +29,7 @@ type stats struct {
 func New() *Routine {
 	var r Routine
 
-	r.cores, r.err = getCores()
+	r.cores, r.err = numCores()
 	if r.err != nil {
 		return &r
 	}
@@ -100,4 +100,7 @@ func (r *Routine) readFile(new_stats *stats) {
 
 	// Error will be handled in String().
 	_, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(new_stats.user), &(new_stats.nice), &(new_stats.sys), &(new_stats.idle))
+}
+
+func numCores() (int, error) {
 }
