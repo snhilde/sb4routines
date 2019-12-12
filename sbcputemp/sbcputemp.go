@@ -80,7 +80,7 @@ func findFiles(path string) ([]os.FileInfo, error) {
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return b, err
+		return nil, err
 	}
 
 	for _, file := range files {
@@ -88,6 +88,11 @@ func findFiles(path string) ([]os.FileInfo, error) {
 			// We found a temperature reading. Add it to the list.
 			b = append(b, file)
 		}
+	}
+
+	// Make sure we found something.
+	if len(b) == 0 {
+		return nil, errors.New("No temp files")
 	}
 
 	return b, nil
