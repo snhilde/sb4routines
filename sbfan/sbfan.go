@@ -59,7 +59,7 @@ func (r *Routine) findFile() {
 
 		// Find the first file that has a name match. The file we want will start with "fan" and end with "input".
 		for _, file := range files {
-			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), "input") {
+			if strings.HasPrefix(file.Name(), "fan") && strings.HasSuffix(file.Name(), "output") {
 				// We found it.
 				r.file = file.Name()
 				break;
