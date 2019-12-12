@@ -21,7 +21,11 @@ func (r *Routine) Update() {
 }
 
 func (r *Routine) String() string {
-	return "fan"
+	if r.err != nil {
+		return r.err.Error()
+	}
+
+	return r.path
 }
 
 // Find the file that we'll monitor for the fan speed.
