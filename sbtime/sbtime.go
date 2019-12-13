@@ -5,25 +5,25 @@ import (
 	"time"
 )
 
-// A Routine is the main object for the sbtime package.
+// A routine is the main object for the sbtime package.
 // time: current timestamp
-type Routine struct {
+type routine struct {
 	time time.Time
 }
 
-// Create a new Routine object and get the current time.
-func New() *Routine {
-	r := Routine{time: time.Now()}
+// Create a new routine object and get the current time.
+func New() *routine {
+	r := routine{time: time.Now()}
 	return &r
 }
 
 // Update the routine's current time.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	r.time = time.Now()
 }
 
 // Print the time in this format: MM D - HH:MM".
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	if r.time.Second() % 2 == 0 {
 		return r.time.Format("Jan 2 - 03:04")
 	} else {
