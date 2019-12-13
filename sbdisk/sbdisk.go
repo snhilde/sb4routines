@@ -6,7 +6,7 @@ import (
 
 type Routine struct {
 	err   error
-	paths []string
+	disks []fs
 }
 
 type fs struct {
@@ -19,16 +19,18 @@ type fs struct {
 func New(paths []string) *Routine {
 	var r Routine
 
-	r.paths = paths
+	for _, path := range paths {
+		r.disks = append(r.disks, fs{path: path})
+	}
 
 	return &r
 }
 
 func (r *Routine) Update() {
-	var b unix.Statfs_t
+	var b syscall.Statfs_t
 
-	for _, path := range r.paths {
-		r.err = syscall.Statfs(path, &b)
+	for _, disk := range r.disks {
+		r.err = syscall.Statfs(disk.path, &b)
 		if r.err != nil {
 			return
 		}
