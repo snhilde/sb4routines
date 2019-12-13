@@ -11,7 +11,7 @@ import (
 // We need to root around in this directory for the device directory for the fan.
 const base_dir = "/sys/class/hwmon/"
 
-// Routine is the main object for this package.
+// routine is the main object for this package.
 // err:      error encountered along the way, if any
 // path:     found path to the device directory
 // max_file: file that contains the maximum speed of the fan, in RPM
@@ -19,7 +19,7 @@ const base_dir = "/sys/class/hwmon/"
 // max:      maximum speed of the fan, in RPM
 // out:      current speed of the fan, in RPM
 // perc:     percentage of maximum fan speed
-type Routine struct {
+type routine struct {
 	err      error
 	path     string
 	max_file os.FileInfo
@@ -29,9 +29,9 @@ type Routine struct {
 	perc     int
 }
 
-// Search around in the base directory for a pair of max and current files, and return a new Routine object.
-func New() *Routine {
-	var r Routine
+// Search around in the base directory for a pair of max and current files, and return a new routine object.
+func New() *routine {
+	var r routine
 
 	// Find the max fan speed file and read its value.
 	r.findFiles()
@@ -46,7 +46,7 @@ func New() *Routine {
 }
 
 // Read the current fan speed in RPM and calculate the percentage of the maximum speed.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	if r.err != nil {
 		return
 	}
@@ -63,7 +63,7 @@ func (r *Routine) Update() {
 }
 
 // Print the formatted current speed in RPM.
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
 	}
@@ -73,7 +73,7 @@ func (r *Routine) String() string {
 
 // Find the file that we'll monitor for the fan speed.
 // It will be in one of the hardware device directories in /sys/class/hwmon.
-func (r *Routine) findFiles() {
+func (r *routine) findFiles() {
 	var dirs  []os.FileInfo
 	var files []os.FileInfo
 
@@ -122,7 +122,7 @@ func (r *Routine) findFiles() {
 }
 
 // Read the value of the passed-in file, which will be a speed in RPM.
-func (r *Routine) readSpeed(file os.FileInfo) int {
+func (r *routine) readSpeed(file os.FileInfo) int {
 	var f *os.File
 	var n int
 
