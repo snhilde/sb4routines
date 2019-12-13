@@ -9,7 +9,11 @@ type Routine struct {
 }
 
 func New(paths []string) *Routine {
-	return new(Routine)
+	var r Routine
+
+	r.paths = paths
+
+	return &r
 }
 
 func (r *Routine) Update() {
