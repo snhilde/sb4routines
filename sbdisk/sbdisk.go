@@ -2,6 +2,7 @@ package sbdisk
 
 import (
 	"syscall"
+	"strings"
 )
 
 type Routine struct {
@@ -41,5 +42,11 @@ func (r *Routine) Update() {
 }
 
 func (r *Routine) String() string {
-	return "disk"
+	var b strings.Builder
+
+	if r.err != nil {
+		return r.err.Error()
+	}
+
+	return b.String()
 }
