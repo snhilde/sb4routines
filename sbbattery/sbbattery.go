@@ -9,15 +9,15 @@ import (
 // err:  error encountered along the way, if any
 // max:  maximum capacity of battery
 // perc: percentage of battery capacity left
-type Routine struct {
+type routine struct {
 	err  error
 	max  int
 	perc int
 }
 
 // Read the maximum capacity of the battery and return struct.
-func New() *Routine {
-	var r Routine
+func New() *routine {
+	var r routine
 
 	// Error will be handled in both Update() and String().
 	r.max = r.readFile("/sys/class/power_supply/BAT0/charge_full")
@@ -26,7 +26,7 @@ func New() *Routine {
 }
 
 // Read current capacity left and calculate percentage from that.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	var now int
 
 	// Handle error reading max capacity.
@@ -48,7 +48,7 @@ func (r *Routine) Update() {
 }
 
 // Print formatted percentage of battery left.
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
 	}
@@ -57,7 +57,7 @@ func (r *Routine) String() string {
 }
 
 // Read out value from file.
-func (r *Routine) readFile(file string) int {
+func (r *routine) readFile(file string) int {
 	var f *os.File
 	var n int
 
