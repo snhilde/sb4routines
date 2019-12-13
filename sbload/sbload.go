@@ -43,5 +43,5 @@ func (r *routine) String() string {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("%.2v %.2v %.2v", r.load_1, r.load_5, r.load_15)
+	return fmt.Sprintf("%.2f %.2f %.2f", r.load_1, r.load_5, r.load_15)
 }
