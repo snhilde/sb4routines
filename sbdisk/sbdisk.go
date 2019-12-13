@@ -9,13 +9,12 @@ type Routine struct {
 	disks []fs
 }
 
+// Note: Bavail is the amount of blocks that can actually be used, while
+// Bfree is the total amount of unused blocks.
 type fs struct {
-	path   string
-	bsize  int64 // unix.Statfs_t.Bsize
-	btotal int64 // unix.Statfs_t.Blocks
-	bavail int64 // unix.Statfs_t.Bavail
-	// Note: Bavail is the amount of blocks that can actually be used, while
-	// Bfree is the total amount of unused blocks.
+	path  string
+	avail int64 // unix.Statfs_t.Bavail
+	total int64 // unix.Statfs_t.Blocks
 }
 
 func New(paths []string) *Routine {
@@ -36,6 +35,8 @@ func (r *Routine) Update() {
 		if r.err != nil {
 			return
 		}
+		r.disks[i].avail = b.Bavail
+		r.disks[i].total = b.Blocks
 	}
 }
 
