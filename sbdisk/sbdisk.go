@@ -6,10 +6,10 @@ import (
 	"fmt"
 )
 
-// Routine is the main object for this package.
+// routine is the main object for this package.
 // err:   error encountered along the way, if any
 // disks: slice of provided filesystems to stat
-type Routine struct {
+type routine struct {
 	err   error
 	disks []fs
 }
@@ -30,9 +30,9 @@ type fs struct {
 	// Bfree is the total amount of unused blocks.
 }
 
-// Copy over the provided filesystem paths and return a new Routine object.
-func New(paths []string) *Routine {
-	var r Routine
+// Copy over the provided filesystem paths and return a new routine object.
+func New(paths []string) *routine {
+	var r routine
 
 	for _, path := range paths {
 		r.disks = append(r.disks, fs{path: path})
@@ -43,7 +43,7 @@ func New(paths []string) *Routine {
 
 // For each provided filesystem, get the amounts of used and total disk space and
 // convert them into a human-readable size.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	var b syscall.Statfs_t
 
 	for i, disk := range r.disks {
@@ -61,7 +61,7 @@ func (r *Routine) Update() {
 }
 
 // Format and print the amounts of disk space for each provided filesystem.
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	var b strings.Builder
 
 	if r.err != nil {
