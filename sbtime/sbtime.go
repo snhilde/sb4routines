@@ -6,7 +6,7 @@ import (
 )
 
 // A Routine is the main object for the sbtime package.
-// It holds the current time.
+// time: current timestamp
 type Routine struct {
 	time time.Time
 }
