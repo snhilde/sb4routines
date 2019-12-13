@@ -1,7 +1,7 @@
 package sbdisk
 
 import (
-	"golang.org/x/sys/unix"
+	"syscall"
 )
 
 type Routine struct {
@@ -28,7 +28,7 @@ func (r *Routine) Update() {
 	var b unix.Statfs_t
 
 	for _, path := range r.paths {
-		r.err = unix.Statfs(path, &b)
+		r.err = syscall.Statfs(path, &b)
 		if r.err != nil {
 			return
 		}
