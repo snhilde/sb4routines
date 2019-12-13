@@ -9,6 +9,13 @@ type Routine struct {
 	paths []string
 }
 
+type fs struct {
+	path   string
+	bsize  int64 // unix.Statfs_t.Bsize
+	btotal int64 // unix.Statfs_t.Blocks
+	bfree  int64 // unix.Statfs_t.Blocks
+}
+
 func New(paths []string) *Routine {
 	var r Routine
 
@@ -20,7 +27,7 @@ func New(paths []string) *Routine {
 func (r *Routine) Update() {
 	var b unix.Statfs_t
 
-	for _, path := range paths {
+	for _, path := range r.paths {
 		r.err = unix.Statfs(path, &b)
 		if r.err != nil {
 			return
