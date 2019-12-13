@@ -5,6 +5,7 @@ import (
 )
 
 type Routine struct {
+	err   error
 	paths []string
 }
 
@@ -17,6 +18,14 @@ func New(paths []string) *Routine {
 }
 
 func (r *Routine) Update() {
+	var b unix.Statfs_t
+
+	for _, path := range paths {
+		r.err = unix.Statfs(path, &b)
+		if r.err != nil {
+			return
+		}
+	}
 }
 
 func (r *Routine) String() string {
