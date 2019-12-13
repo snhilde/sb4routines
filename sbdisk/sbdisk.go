@@ -19,9 +19,9 @@ type Routine struct {
 // total_u: unit for the total bytes
 type fs struct {
 	path    string
-	avail   uint64 // unix.Statfs_t.Bavail
-	avail_u rune
-	total   uint64 // unix.Statfs_t.Blocks
+	used    uint64
+	used_u  rune
+	total   uint64
 	total_u rune
 	// Note: Bavail is the amount of blocks that can actually be used, while
 	// Bfree is the total amount of unused blocks.
@@ -45,8 +45,12 @@ func (r *Routine) Update() {
 		if r.err != nil {
 			return
 		}
-		r.disks[i].avail, r.disks[i].avail_u = shrink(b.Bavail * uint64(b.Bsize))
-		r.disks[i].total, r.disks[i].total_u = shrink(b.Blocks * uint64(b.Bsize))
+
+		total := b.Blocks * uint64(b.Bsize)
+		used  := total - (b.Bavail * uint64(b.Bsize))
+
+		r.disks[i].used,  r.disks[i].used_u  = shrink(used)
+		r.disks[i].total, r.disks[i].total_u = shrink(total)
 	}
 }
 
@@ -62,7 +66,7 @@ func (r *Routine) String() string {
 			b.WriteString(", ")
 		}
 		fmt.Fprintf(&b, "%s: %v%c/%v%c", r.disks[i].path,
-				r.disks[i].avail, r.disks[i].avail_u,
+				r.disks[i].used,  r.disks[i].used_u,
 				r.disks[i].total, r.disks[i].total_u)
 	}
 
