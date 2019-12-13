@@ -1,15 +1,14 @@
 package sbdisk
 
 import (
+	"golang.org/x/sys/unix"
 )
 
 type Routine struct {
-	total int
-	used  int
-	free  int
+	paths []string
 }
 
-func New() *Routine {
+func New(paths []string) *Routine {
 	return new(Routine)
 }
 
