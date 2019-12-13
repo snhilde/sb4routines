@@ -11,12 +11,12 @@ import (
 // We need to root around in this directory for the device directory for the fan.
 const base_dir = "/sys/class/hwmon/"
 
-// Routine is the main object for this package.
+// routine is the main object for this package.
 // err:   error encountered along the way, if any
 // path:  path to the device directory, as discovered in findDir()
 // files: slice of files that contain temperature readings
 // temp:  average temperature across all sensors, in degrees Celsius
-type Routine struct {
+type routine struct {
 	err   error
 	path  string
 	files []os.FileInfo
@@ -24,8 +24,8 @@ type Routine struct {
 }
 
 // Find our device directory, build a list of all the temperature sensors in it, and return a new object.
-func New() *Routine {
-	var r Routine
+func New() *routine {
+	var r routine
 
 	// Error will be handled in Update() and String().
 	r.path, r.err = findDir()
@@ -40,7 +40,7 @@ func New() *Routine {
 }
 
 // Read out the value of each sensor, get an average of all temperatures, and convert it from milliCelsius to Celsius.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	var f *os.File
 	var n int
 
@@ -74,7 +74,7 @@ func (r *Routine) Update() {
 }
 
 // Print formatted temperature average in degrees Celsius.
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
 	}
