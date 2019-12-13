@@ -6,15 +6,18 @@ import (
 	"fmt"
 )
 
+// Routine is the main object for this package.
+// err:   error encountered along the way, if any
+// disks: slice of provided filesystems to stat
 type Routine struct {
 	err   error
 	disks []fs
 }
 
-// fs
+// fs holds information about a single filesystem.
 // path:    given path that will be used to stat the partition
-// avail:   available bytes for this filesystem
-// avail_u: unit for the available bytes
+// avail:   used bytes for this filesystem
+// avail_u: unit for the used bytes
 // total:   total bytes for this filesystem
 // total_u: unit for the total bytes
 type fs struct {
@@ -27,6 +30,7 @@ type fs struct {
 	// Bfree is the total amount of unused blocks.
 }
 
+// Copy over the provided filesystem paths and return a new Routine object.
 func New(paths []string) *Routine {
 	var r Routine
 
@@ -37,6 +41,8 @@ func New(paths []string) *Routine {
 	return &r
 }
 
+// For each provided filesystem, get the amounts of used and total disk space and
+// convert them into a human-readable size.
 func (r *Routine) Update() {
 	var b syscall.Statfs_t
 
@@ -54,6 +60,7 @@ func (r *Routine) Update() {
 	}
 }
 
+// Format and print the amounts of disk space for each provided filesystem.
 func (r *Routine) String() string {
 	var b strings.Builder
 
@@ -73,8 +80,9 @@ func (r *Routine) String() string {
 	return b.String()
 }
 
+// Iteratively decrease the amount of bytes by a step of 10^3 until human-readable.
 func shrink(blocks uint64) (uint64, rune) {
-	var units = [...]rune{'B', 'K', 'M', 'G', 'T'}
+	var units = [...]rune{'B', 'K', 'M', 'G', 'T', 'P', 'E'}
 	var i int
 
 	for blocks > 1024 {
