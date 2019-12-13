@@ -7,14 +7,14 @@ import (
 	"bufio"
 )
 
-// Routine is the main object for this package.
+// routine is the main object for this package.
 // It contains the data obtained from the specified TODO file, including file info and a copy of the first 2 lines.
 // err:   error encountered along the way, if any
 // path:  path to the TODO file
 // info:  TODO file info, as returned by os.Stat()
 // line1: first line of the TODO file
 // line2: second line of the TODO file
-type Routine struct {
+type routine struct {
 	err    error
 	path   string
 	info   os.FileInfo
@@ -22,10 +22,10 @@ type Routine struct {
 	line2  string
 }
 
-// Return a new Routine object.
+// Return a new routine object.
 // path is the absolute path to the TODO file.
-func New(path string) *Routine {
-	var r Routine
+func New(path string) *routine {
+	var r routine
 
 	r.path = path
 
@@ -45,7 +45,7 @@ func New(path string) *Routine {
 }
 
 // If the TODO file was modified since the last read, read it in again.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	var new_info os.FileInfo
 
 	new_info, r.err = os.Stat(r.path)
@@ -73,7 +73,7 @@ func (r *Routine) Update() {
  //   3. If the first line is empty but the second line has content, print only the second line.
  //   4. If the first line has content and the second line is indented, print "line1 -> line2".
  //   5. If both lines have content and both are flush, print "line1 | line2".
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	var b strings.Builder
 
 	// Handle any error we might have received in another stage.
@@ -109,7 +109,7 @@ func (r *Routine) String() string {
 }
 
 // Grab the first two lines of the TODO file.
-func (r *Routine) readFile() {
+func (r *routine) readFile() {
 	var file *os.File
 
 	file, r.err = os.Open(r.path)
