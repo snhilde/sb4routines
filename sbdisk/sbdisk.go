@@ -13,7 +13,9 @@ type fs struct {
 	path   string
 	bsize  int64 // unix.Statfs_t.Bsize
 	btotal int64 // unix.Statfs_t.Blocks
-	bfree  int64 // unix.Statfs_t.Blocks
+	bavail int64 // unix.Statfs_t.Bavail
+	// Note: Bavail is the amount of blocks that can actually be used, while
+	// Bfree is the total amount of unused blocks.
 }
 
 func New(paths []string) *Routine {
@@ -29,7 +31,7 @@ func New(paths []string) *Routine {
 func (r *Routine) Update() {
 	var b syscall.Statfs_t
 
-	for _, disk := range r.disks {
+	for i, disk := range r.disks {
 		r.err = syscall.Statfs(disk.path, &b)
 		if r.err != nil {
 			return
