@@ -13,8 +13,8 @@ type Routine struct {
 // Bfree is the total amount of unused blocks.
 type fs struct {
 	path  string
-	avail int64 // unix.Statfs_t.Bavail
-	total int64 // unix.Statfs_t.Blocks
+	avail uint64 // unix.Statfs_t.Bavail
+	total uint64 // unix.Statfs_t.Blocks
 }
 
 func New(paths []string) *Routine {
@@ -35,8 +35,8 @@ func (r *Routine) Update() {
 		if r.err != nil {
 			return
 		}
-		r.disks[i].avail = b.Bavail * b.Bsize
-		r.disks[i].total = b.Blocks * b.Bsize
+		r.disks[i].avail = b.Bavail * uint64(b.Bsize)
+		r.disks[i].total = b.Blocks * uint64(b.Bsize)
 	}
 }
 
