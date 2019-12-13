@@ -35,8 +35,8 @@ func (r *Routine) Update() {
 		if r.err != nil {
 			return
 		}
-		r.disks[i].avail = b.Bavail
-		r.disks[i].total = b.Blocks
+		r.disks[i].avail = b.Bavail * b.Bsize
+		r.disks[i].total = b.Blocks * b.Bsize
 	}
 }
 
