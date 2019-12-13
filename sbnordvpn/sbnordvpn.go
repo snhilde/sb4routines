@@ -6,21 +6,21 @@ import (
 	"errors"
 )
 
-// Routine is the main object in the package.
+// routine is the main object in the package.
 // err: any error encountered along the way, if any
 // b:   buffer to hold connnection string
-type Routine struct {
+type routine struct {
 	err error
 	b   strings.Builder
 }
 
-// Return a new Routine object.
-func New() *Routine {
-	return new(Routine)
+// Return a new routine object.
+func New() *routine {
+	return new(routine)
 }
 
 // Run the command and capture the output.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	var out []byte
 
 	proc       := exec.Command("nordvpn", "status")
@@ -33,7 +33,7 @@ func (r *Routine) Update() {
 }
 
 // Format and print the current connection status.
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	if r.err != nil {
 		return "NordVPN: " + r.err.Error()
 	}
@@ -42,7 +42,7 @@ func (r *Routine) String() string {
 }
 
 // Parse the command's output.
-func (r *Routine) parseCommand(s string) {
+func (r *routine) parseCommand(s string) {
 	// If there is a connection to the VPN, the command will return this format:
 	//     Status: Connected
 	//     Current server: <server.url>
