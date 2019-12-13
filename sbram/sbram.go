@@ -7,6 +7,7 @@ type routine struct {
 }
 
 func New() *routine {
+	return new(routine)
 }
 
 func (r *routine) Update() {
