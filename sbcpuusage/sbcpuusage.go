@@ -10,11 +10,11 @@ import (
 	"bufio"
 )
 
-// Routine is the main object for this package.
+// routine is the main object for this package.
 // err:       error encountered along the way, if any
 // old_stats: CPU stats from last read
 // perc:      percentage of CPU currently being used
-type Routine struct {
+type routine struct {
 	err       error
 	threads   int
 	old_stats stats
@@ -29,9 +29,9 @@ type stats struct {
 	idle int
 }
 
-// Get current CPU stats and return Routine object.
-func New() *Routine {
-	var r Routine
+// Get current CPU stats and return routine object.
+func New() *routine {
+	var r routine
 
 	r.threads, r.err = numThreads()
 	if r.err != nil {
@@ -44,7 +44,7 @@ func New() *Routine {
 }
 
 // Get current CPU stats, compare to last-read stats, and calculate percentage of CPU being used.
-func (r *Routine) Update() {
+func (r *routine) Update() {
 	var new_stats stats
 
 	r.readFile(&new_stats)
@@ -75,7 +75,7 @@ func (r *Routine) Update() {
 }
 
 // Print formatted CPU percentage.
-func (r *Routine) String() string {
+func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
 	}
@@ -84,7 +84,7 @@ func (r *Routine) String() string {
 }
 
 // Open /proc/stat and read out the CPU stats.
-func (r *Routine) readFile(new_stats *stats) {
+func (r *routine) readFile(new_stats *stats) {
 	// The first line of /proc/stat will look like this:
 	// "cpu userVal niceVal sysVal idleVal ..."
 	var file *os.File
