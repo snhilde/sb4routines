@@ -3,6 +3,7 @@ package sbdisk
 import (
 	"syscall"
 	"strings"
+	"fmt"
 )
 
 type Routine struct {
@@ -46,6 +47,13 @@ func (r *Routine) String() string {
 
 	if r.err != nil {
 		return r.err.Error()
+	}
+
+	for i := range r.disks {
+		if i > 0 {
+			b.WriteString(", ")
+		}
+		fmt.Fprintf(&b, "%s: %v/%v", r.disks[i].path, r.disks[i].avail, r.disks[i].total)
 	}
 
 	return b.String()
