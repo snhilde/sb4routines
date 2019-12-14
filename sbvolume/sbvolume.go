@@ -30,12 +30,6 @@ func (r *routine) Update() {
 		return
 	}
 
-	err = sanityCheck(out)
-	if err != nil {
-		r.err = err
-		return
-	}
-
 	// Find the line that has the percentage volume in it.
 	lines := strings.Split(out, "\n")
 	for _, line := range lines {
@@ -79,21 +73,6 @@ func (r *routine) runCmd() (string, error) {
 	}
 
 	return string(out), nil
-}
-
-// Make sure the user passed a valid control.
-// If the control was not valid, we'll get an error message like this:
-// amixer: Unable to find simple control 'bad_control',0
-func sanityCheck(out string) error {
-	lines := strings.Split(out, "\n")
-	if strings.Contains(lines[0], "Unable to find") {
-		fields  := strings.Split(lines[0], ":")
-		err_msg := strings.TrimSpace(fields[1])
-		err_msg  = err_msg[:len(err_msg) - 2]
-		return errors.New(err_msg)
-	}
-
-	return nil
 }
 
 // This will ensure that the volumes are multiples of 10 and look nicer.
