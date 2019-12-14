@@ -3,6 +3,7 @@ package sbfan
 import (
 	"os"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"errors"
 	"fmt"
@@ -40,7 +41,7 @@ func New() *routine {
 	}
 
 	// Error will be handled later in Update() and String().
-	r.max = r.readSpeed(r.max_file)
+	r.max, r.err = readSpeed(r.path + r.max_file.Name())
 
 	return &r
 }
@@ -51,7 +52,7 @@ func (r *routine) Update() {
 		return
 	}
 
-	r.out = r.readSpeed(r.out_file)
+	r.out, r.err = readSpeed(r.path + r.out_file.Name())
 	if r.err != nil {
 		return
 	}
@@ -122,20 +123,18 @@ func (r *routine) findFiles() {
 }
 
 // Read the value of the passed-in file, which will be a speed in RPM.
-func (r *routine) readSpeed(file os.FileInfo) int {
-	var f *os.File
+func readSpeed(path string) (int, error) {
 	var n int
 
-	f, r.err = os.Open(r.path + file.Name())
-	if r.err != nil {
-		return -1
-	}
-	defer f.Close()
-
-	_, r.err = fmt.Fscan(f, &n)
-	if r.err != nil {
-		return -1
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		return -1, err
 	}
 
-	return n
+	n, err = strconv.Atoi(strings.TrimSpace(string(b)))
+	if err != nil {
+		return -1, err
+	}
+
+	return n, nil
 }
