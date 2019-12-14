@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"errors"
 )
@@ -40,27 +41,26 @@ func New() *routine {
 }
 
 // Read out the value of each sensor, get an average of all temperatures, and convert it from milliCelsius to Celsius.
+// If we have trouble reading a particular sensor, then we'll skip it on this pass.
 func (r *routine) Update() {
-	var f *os.File
 	var n int
 
-	if r.err != nil {
+	if r.path == "" || len(r.files) == 0 {
 		return
 	}
 
 	r.temp = 0
 	for _, file := range r.files {
-		f, r.err = os.Open(r.path + file.Name())
-		if r.err != nil {
-			r.temp = 0
-			return
+		b, err := ioutil.ReadFile(r.path + file.Name())
+		if err != nil {
+			r.err = err
+			continue
 		}
 
-		_, r.err = fmt.Fscan(f, &n)
-		f.Close()
-		if r.err != nil {
-			r.temp = 0
-			return
+		n, err = strconv.Atoi(strings.TrimSpace(string(b)))
+		if err != nil {
+			r.err = err
+			continue
 		}
 
 		r.temp += n
