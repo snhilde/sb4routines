@@ -15,5 +15,9 @@ func (r *routine) Update() {
 }
 
 func (r *routine) String() string {
+	if r.err != nil {
+		return r.err.Error()
+	}
+
 	return "volume"
 }
