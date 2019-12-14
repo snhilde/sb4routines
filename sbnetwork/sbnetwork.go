@@ -2,6 +2,7 @@ package sbnetwork
 
 import (
 	"net"
+	"errors"
 	"strings"
 )
 
@@ -10,11 +11,25 @@ type routine struct {
 	ilist []net.Interface
 }
 
-func New() *routine {
+func New(inames ...string) *routine {
 	var r routine
 
-	// Error will be handled in Update() and String().
-	r.ilist, r.err = getInterface()
+	if len(inames) == 0 {
+		// Nothing was passed in. We'll grab the default interfaces.
+		// Error will be handled in Update() and String().
+		r.ilist, r.err = getInterfaces()
+	} else {
+		for _, iname := range inames {
+			iface, err := net.InterfaceByName(iname)
+			if err != nil {
+				// Error will be handled in Update() and String().
+				r.err = errors.New(iname + ": " + err.Error())
+				break;
+			}
+			r.ilist = append(r.ilist, *iface)
+		}
+	}
+
 	return &r
 }
 
@@ -34,7 +49,7 @@ func (r *routine) String() string {
 	return "network"
 }
 
-func getInterface() ([]net.Interface, error) {
+func getInterfaces() ([]net.Interface, error) {
 	var ilist []net.Interface
 
 	ifaces, err := net.Interfaces()
