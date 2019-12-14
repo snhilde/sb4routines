@@ -47,6 +47,7 @@ func (r *routine) Update() {
 		return
 	}
 
+	r.total, r.used, r.err = calcRAM(total, avail)
 }
 
 func (r *routine) String() string {
