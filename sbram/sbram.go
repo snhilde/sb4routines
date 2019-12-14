@@ -30,6 +30,10 @@ func (r *routine) Update() {
 		return
 	}
 
+	// Reset values so we can make sure we found both.
+	r.total = 0
+	r.avail = 0
+
 	lines := strings.Split(string(out), "\n");
 	for _, line := range lines {
 		if strings.HasPrefix(line, "MemTotal") {
