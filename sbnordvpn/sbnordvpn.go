@@ -21,11 +21,10 @@ func New() *routine {
 
 // Run the command and capture the output.
 func (r *routine) Update() {
-	var out []byte
-
-	proc       := exec.Command("nordvpn", "status")
-	out, r.err  = proc.Output()
-	if r.err != nil {
+	proc     := exec.Command("nordvpn", "status")
+	out, err := proc.Output()
+	if err != nil {
+		r.err = err
 		return
 	}
 
