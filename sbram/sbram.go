@@ -1,6 +1,9 @@
 package sbram
 
 import (
+	"os/exec"
+	"strings"
+	"errors"
 )
 
 type routine struct {
@@ -16,6 +19,27 @@ func New() *routine {
 // it is missing the amount of cached RAM). Instead, we're going to read out /proc/meminfo and grab
 // the values we need from there.
 func (r *routine) Update() {
+	var out []byte
+
+	proc       := exec.Command("cat", "/proc/meminfo")
+	out, r.err  = proc.Output()
+	if r.err != nil {
+		return
+	}
+
+	lines := strings.Split(string(out), "\n");
+	for _, line := range lines {
+		if strings.HasPrefix(line, "MemTotal") {
+			fields := strings.Fields(line)
+			if len(fields) != 3 {
+				r.err = errors.New("Invalid MemTotal fields")
+				return
+			}
+
+		} else if strings.HasPrefix(line, "MemAvailable") {
+		}
+	}
+
 }
 
 func (r *routine) String() string {
