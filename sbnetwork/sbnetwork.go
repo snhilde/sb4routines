@@ -12,9 +12,11 @@ type routine struct {
 }
 
 type sbiface struct {
-	iface net.Interface
-	up    int
-	down  int
+	iface     net.Interface
+	up        int
+	down      int
+	up_path   string
+	down_path string
 }
 
 func New(inames ...string) *routine {
@@ -38,13 +40,16 @@ func New(inames ...string) *routine {
 		}
 	}
 
+	// Handle any problems that came up, or build up list of interfaces for later use.
 	if err != nil {
 		r.err = err
 	} else if len(ilist) == 0 {
 		r.err = errors.New("No interfaces found")
 	} else {
 		for _, iface := range ilist {
-			r.ilist = append(r.ilist, sbiface{iface: iface})
+			up_path   := "/sys/class/net/" + iface.Name + "/statistics/rx_bytes"
+			down_path := "/sys/class/net/" + iface.Name + "/statistics/tx_bytes"
+			r.ilist = append(r.ilist, sbiface{iface: iface, up_path: up_path, down_path: down_path})
 		}
 	}
 
@@ -82,4 +87,7 @@ func getInterfaces() ([]net.Interface, error) {
 	}
 
 	return ilist, nil
+}
+
+func readFile(path string) (int, error) {
 }
