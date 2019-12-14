@@ -7,26 +7,44 @@ import (
 )
 
 type routine struct {
-	err   error
-	ilist []net.Interface
+	err     error
+	ilist []sbiface
+}
+
+type sbiface struct {
+	iface net.Interface
+	up    int
+	down  int
 }
 
 func New(inames ...string) *routine {
-	var r routine
+	var r       routine
+	var iptr   *net.Interface
+	var ilist []net.Interface
+	var err     error
 
 	if len(inames) == 0 {
 		// Nothing was passed in. We'll grab the default interfaces.
-		// Error will be handled in Update() and String().
-		r.ilist, r.err = getInterfaces()
+		ilist, err = getInterfaces()
 	} else {
 		for _, iname := range inames {
-			iface, err := net.InterfaceByName(iname)
+			iptr, err = net.InterfaceByName(iname)
 			if err != nil {
 				// Error will be handled in Update() and String().
-				r.err = errors.New(iname + ": " + err.Error())
-				break;
+				err = errors.New(iname + ": " + err.Error())
+				break
 			}
-			r.ilist = append(r.ilist, *iface)
+			ilist = append(ilist, *iptr)
+		}
+	}
+
+	if err != nil {
+		r.err = err
+	} else if len(ilist) == 0 {
+		r.err = errors.New("No interfaces found")
+	} else {
+		for _, iface := range ilist {
+			r.ilist = append(r.ilist, sbiface{iface: iface})
 		}
 	}
 
@@ -34,16 +52,11 @@ func New(inames ...string) *routine {
 }
 
 func (r *routine) Update() {
-	if r.err != nil || len(r.ilist) == 0 {
-		return
-	}
 }
 
 func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
-	} else if r.ilist == nil {
-		return "No network interfaces found"
 	}
 
 	return "network"
