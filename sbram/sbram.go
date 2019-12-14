@@ -29,20 +29,20 @@ func New() *routine {
 // missing the amount of cached RAM). Instead, we're going to read out /proc/meminfo and grab the values we need from
 // there. All lines of that file have three fields: field name, value, and unit
 func (r *routine) Update() {
-	var out []byte
-
-	proc       := exec.Command("cat", "/proc/meminfo")
-	out, r.err  = proc.Output()
-	if r.err != nil {
+	proc     := exec.Command("cat", "/proc/meminfo")
+	out, err := proc.Output()
+	if err != nil {
+		r.err = err
 		return
 	}
 
-	r.total, r.avail, r.err = parseCmd(string(out))
-	if r.err != nil {
+	total, avail, err := parseCmd(string(out))
+	if err != nil {
+		r.err = err
 		return
 	}
 
-	if r.total == 0 || r.avail == 0 {
+	if total == 0 || avail == 0 {
 		r.err = errors.New("Failed to parse out memory fields")
 		return
 	}
@@ -60,22 +60,29 @@ func (r *routine) String() string {
 func parseCmd(output string) (int, int, error) {
 	var total int
 	var avail int
+	var err   error
 
-	lines := strings.Split(string(out), "\n");
+	lines := strings.Split(string(output), "\n");
 	for _, line := range lines {
 		if strings.HasPrefix(line, "MemTotal") {
 			fields := strings.Fields(line)
 			if len(fields) != 3 {
 				return 0, 0, errors.New("Invalid MemTotal fields")
 			}
-			total = strconv.Atoi(fields[1])
+			total, err = strconv.Atoi(fields[1])
+			if err != nil {
+				return 0, 0, err
+			}
 
 		} else if strings.HasPrefix(line, "MemAvailable") {
 			fields := strings.Fields(line)
 			if len(fields) != 3 {
 				return 0, 0, errors.New("Invalid MemAvailable fields")
 			}
-			avail = strconv.Atoi(fields[1])
+			avail, err = strconv.Atoi(fields[1])
+			if err != nil {
+				return 0, 0, err
+			}
 		}
 	}
 
