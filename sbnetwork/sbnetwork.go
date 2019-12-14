@@ -3,8 +3,9 @@ package sbnetwork
 import (
 	"net"
 	"errors"
+	"io/ioutil"
 	"strings"
-	"os"
+	"strconv"
 	"fmt"
 )
 
@@ -140,20 +141,12 @@ func getInterfaces() ([]string, error) {
 
 // Read out the contents of the given file.
 func readFile(path string) (int, error) {
-	var n int
-
-	f, err := os.Open(path)
-	if err != nil {
-		return -1, err
-	}
-	defer f.Close()
-
-	_, err = fmt.Fscan(f, &n)
+	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return -1, err
 	}
 
-	return n, nil
+	return strconv.Atoi(strings.TrimSpace(string(b)))
 }
 
 // Iteratively decrease the amount of bytes by a step of 2^10 until human-readable.
