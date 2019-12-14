@@ -14,7 +14,7 @@ type routine struct {
 }
 
 type sbiface struct {
-	iface     net.Interface
+	name      string
 	down_path string
 	down      int
 	up_path   string
@@ -23,8 +23,7 @@ type sbiface struct {
 
 func New(inames ...string) *routine {
 	var r       routine
-	var iptr   *net.Interface
-	var ilist []net.Interface
+	var ilist []string
 	var err     error
 
 	if len(inames) == 0 {
@@ -32,13 +31,14 @@ func New(inames ...string) *routine {
 		ilist, err = getInterfaces()
 	} else {
 		for _, iname := range inames {
-			iptr, err = net.InterfaceByName(iname)
+			// Make sure we have a valid interface name.
+			_, err = net.InterfaceByName(iname)
 			if err != nil {
 				// Error will be handled in Update() and String().
 				err = errors.New(iname + ": " + err.Error())
 				break
 			}
-			ilist = append(ilist, *iptr)
+			ilist = append(ilist, iname)
 		}
 	}
 
@@ -48,10 +48,10 @@ func New(inames ...string) *routine {
 	} else if len(ilist) == 0 {
 		r.err = errors.New("No interfaces found")
 	} else {
-		for _, iface := range ilist {
-			down_path := "/sys/class/net/" + iface.Name + "/statistics/rx_bytes"
-			up_path   := "/sys/class/net/" + iface.Name + "/statistics/tx_bytes"
-			r.ilist = append(r.ilist, sbiface{iface: iface, down_path: down_path, up_path: up_path})
+		for _, iname := range ilist {
+			down_path := "/sys/class/net/" + iname + "/statistics/rx_bytes"
+			up_path   := "/sys/class/net/" + iname + "/statistics/tx_bytes"
+			r.ilist = append(r.ilist, sbiface{name: iname, down_path: down_path, up_path: up_path})
 		}
 	}
 
@@ -77,15 +77,24 @@ func (r *routine) Update() {
 }
 
 func (r *routine) String() string {
+	var b strings.Builder
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return "network"
+	for i, iface := range r.ilist {
+		if i > 0 {
+			b.WriteString(", ")
+		}
+		fmt.Fprintf(&b, "%s: %v/%v", iface.name, iface.down, iface.up)
+	}
+
+	return b.String()
 }
 
-func getInterfaces() ([]net.Interface, error) {
-	var ilist []net.Interface
+func getInterfaces() ([]string, error) {
+	var inames []string
 
 	ifaces, err := net.Interfaces()
 	if err != nil {
@@ -100,10 +109,10 @@ func getInterfaces() ([]net.Interface, error) {
 			// If the network is not up, then we don't need to monitor it.
 			continue
 		}
-		ilist = append(ilist, iface)
+		inames = append(inames, iface.Name)
 	}
 
-	return ilist, nil
+	return inames, nil
 }
 
 func readFile(path string) (int, error) {
