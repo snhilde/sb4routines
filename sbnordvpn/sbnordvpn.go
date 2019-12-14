@@ -63,7 +63,7 @@ func (r *routine) parseCommand(s string) {
 	if lines[0] == "Status: Connected" {
 		for _, line := range lines {
 			if strings.HasPrefix(line, "City") {
-				fields := strings.Field(line)
+				fields := strings.Fields(line)
 				if len(fields) != 2 {
 					r.err = errors.New("Error parsing City")
 				} else {
