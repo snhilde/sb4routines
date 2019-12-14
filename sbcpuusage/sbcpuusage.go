@@ -121,16 +121,11 @@ func numThreads() (int, error) {
 	lines := strings.Split(string(out), "\n")
 	for _, line := range lines {
 		if strings.HasPrefix(line, "Thread(s) per core") {
-			fields := strings.Split(line, ":")
+			fields := strings.Fields(line)
 			if len(fields) != 2 {
 				return -1, errors.New("Invalid fields")
 			}
-			s      := strings.TrimSpace(fields[1])
-			n, err := strconv.Atoi(s)
-			if err != nil {
-				return -1, err
-			}
-			return n, nil
+			return strconv.Atoi(fields[1])
 		}
 	}
 
