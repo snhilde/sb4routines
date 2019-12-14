@@ -5,6 +5,7 @@ import (
 	"strings"
 	"errors"
 	"strconv"
+	"fmt"
 )
 
 // routine is the main object for this package.
@@ -56,7 +57,7 @@ func (r *routine) String() string {
 		return r.err.Error()
 	}
 
-	return "ram"
+	return fmt.Sprintf("%.1f%c/%.1f%c", r.used, r.used_u, r.total, r.total_u)
 }
 
 func parseCmd(output string) (int, int, error) {
@@ -93,7 +94,7 @@ func parseCmd(output string) (int, int, error) {
 
 // Iteratively decrease the amount of bytes by a step of 2^10 until human-readable.
 func shrink(memory int) (float32, rune) {
-	var units = [...]rune{'B', 'K', 'M', 'G', 'T', 'P', 'E'}
+	var units = [...]rune{'K', 'M', 'G', 'T', 'P', 'E'}
 	var i int
 
 	memory_f := float32(memory)
