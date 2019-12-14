@@ -59,17 +59,10 @@ func (r *routine) String() string {
 
 // Read out value from file.
 func readFile(path string) (int, error) {
-	var n  int
-
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return -1, err
 	}
 
-	n, err = strconv.Atoi(strings.TrimSpace(string(b)))
-	if err != nil {
-		return -1, err
-	}
-
-	return n, nil
+	return strconv.Atoi(strings.TrimSpace(string(b)))
 }
