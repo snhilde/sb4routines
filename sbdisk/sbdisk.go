@@ -80,7 +80,7 @@ func (r *routine) String() string {
 	return b.String()
 }
 
-// Iteratively decrease the amount of bytes by a step of 10^3 until human-readable.
+// Iteratively decrease the amount of bytes by a step of 2^10 until human-readable.
 func shrink(blocks uint64) (uint64, rune) {
 	var units = [...]rune{'B', 'K', 'M', 'G', 'T', 'P', 'E'}
 	var i int
