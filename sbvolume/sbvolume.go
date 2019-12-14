@@ -4,6 +4,8 @@ import (
 	"os/exec"
 	"strings"
 	"errors"
+	"strconv"
+	"fmt"
 )
 
 type routine struct {
@@ -33,6 +35,32 @@ func (r *routine) Update() {
 		r.err = err
 		return
 	}
+
+	// Find the line that has the percentage volume in it.
+	lines := strings.Split(out, "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "Playback") && strings.Contains(line, "%]") {
+			// We found it. Pull out the volume.
+			fields := strings.Fields(line)
+			for _, field := range fields {
+				if strings.Contains(field, "%]") {
+					s        := strings.Trim(field, "[]")
+					s         = strings.TrimRight(s, "%")
+					vol, err := strconv.Atoi(s)
+					if err != nil {
+						r.err = err
+						return
+					}
+
+					r.vol = normalize(vol)
+					return
+				}
+			}
+		}
+	}
+
+	// If we're here, then we didn't find a volume.
+	r.err = errors.New("No volume found for " + r.control)
 }
 
 func (r *routine) String() string {
@@ -40,7 +68,7 @@ func (r *routine) String() string {
 		return r.err.Error()
 	}
 
-	return "volume"
+	return fmt.Sprintf("Vol %v%%", r.vol)
 }
 
 func (r *routine) runCmd() (string, error) {
@@ -66,4 +94,9 @@ func sanityCheck(out string) error {
 	}
 
 	return nil
+}
+
+// This will ensure that the volumes are multiples of 10 and look nicer.
+func normalize(vol int) int {
+	return (vol+5) / 10 * 10
 }
