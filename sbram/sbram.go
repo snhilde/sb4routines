@@ -24,15 +24,15 @@ func New() *routine {
 func (r *routine) Update() {
 	var out []byte
 
+	// Reset values so we can make sure we found both.
+	r.total = 0
+	r.avail = 0
+
 	proc       := exec.Command("cat", "/proc/meminfo")
 	out, r.err  = proc.Output()
 	if r.err != nil {
 		return
 	}
-
-	// Reset values so we can make sure we found both.
-	r.total = 0
-	r.avail = 0
 
 	lines := strings.Split(string(out), "\n");
 	for _, line := range lines {
@@ -42,6 +42,7 @@ func (r *routine) Update() {
 				r.err = errors.New("Invalid MemTotal fields")
 				return
 			}
+			r.total = strconv.Atoi(fields[1])
 
 		} else if strings.HasPrefix(line, "MemAvailable") {
 			fields := strings.Fields(line)
@@ -49,6 +50,7 @@ func (r *routine) Update() {
 				r.err = errors.New("Invalid MemAvailable fields")
 				return
 			}
+			r.avail = strconv.Atoi(fields[1])
 		}
 	}
 
