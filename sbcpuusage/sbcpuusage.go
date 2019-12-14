@@ -83,7 +83,7 @@ func (r *routine) String() string {
 	return fmt.Sprintf("%2d%% CPU", r.perc)
 }
 
-// Open /proc/stat and read out the CPU stats.
+// Open /proc/stat and read out the CPU stats from the first line.
 func (r *routine) readFile(new_stats *stats) {
 	// The first line of /proc/stat will look like this:
 	// "cpu userVal niceVal sysVal idleVal ..."
