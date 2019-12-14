@@ -63,13 +63,13 @@ func (r *routine) parseCommand(s string) {
 	if lines[0] == "Status: Connected" {
 		for _, line := range lines {
 			if strings.HasPrefix(line, "City") {
-				fields := strings.Split(line, ":")
+				fields := strings.Field(line)
 				if len(fields) != 2 {
 					r.err = errors.New("Error parsing City")
 				} else {
 					r.b.Reset()
 					r.b.WriteString("Connected: ")
-					r.b.WriteString(strings.TrimSpace(fields[1]))
+					r.b.WriteString(fields[1])
 				}
 				break;
 			}
