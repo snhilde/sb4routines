@@ -34,7 +34,7 @@ func New(inames ...string) *routine {
 }
 
 func (r *routine) Update() {
-	if r.err != nil || r.ilist == nil {
+	if r.err != nil || len(r.ilist) == 0 {
 		return
 	}
 }
