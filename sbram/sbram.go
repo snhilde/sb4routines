@@ -45,7 +45,7 @@ func (r *routine) Update() {
 		return
 	}
 
-	r.total, r.used, r.err = calcRAM(total, avail)
+	r.total, r.total_u = shrink(total)
 }
 
 func (r *routine) String() string {
@@ -88,5 +88,15 @@ func parseCmd(output string) (int, int, error) {
 	return total, avail, nil
 }
 
-func calcRAM(total int, avail int) (float32, float32, error) {
+// Iteratively decrease the amount of bytes by a step of 2^10 until human-readable.
+func shrink(memory int) (float32, rune) {
+	var units = [...]rune{'B', 'K', 'M', 'G', 'T', 'P', 'E'}
+	var i int
+
+	for memory > 1024 {
+		memory /= 1024
+		i++
+	}
+
+	return memory, units[i]
 }
