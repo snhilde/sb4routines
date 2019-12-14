@@ -17,10 +17,10 @@ type sbiface struct {
 	name      string
 	down_path string
 	up_path   string
-	down_old  int
-	up_old    int
-	down_new  int
-	up_new    int
+	old_down  int
+	old_up    int
+	new_down  int
+	new_up    int
 }
 
 func New(inames ...string) *routine {
@@ -62,22 +62,22 @@ func New(inames ...string) *routine {
 
 func (r *routine) Update() {
 	for i, iface := range r.ilist {
-		r.ilist[i].down_old = iface.down_new
-		r.ilist[i].up_old   = iface.up_new
+		r.ilist[i].old_down = iface.new_down
+		r.ilist[i].old_up   = iface.new_up
 
 		down, err := readFile(iface.down_path)
 		if err != nil {
 			r.err = err
 			break
 		}
-		r.ilist[i].down_new = down
+		r.ilist[i].new_down = down
 
 		up, err := readFile(iface.up_path)
 		if err != nil {
 			r.err = err
 			break
 		}
-		r.ilist[i].up_new = up
+		r.ilist[i].new_up = up
 	}
 }
 
@@ -89,8 +89,8 @@ func (r *routine) String() string {
 	}
 
 	for i, iface := range r.ilist {
-		down, down_u := shrink(iface.down_new - iface.down_old)
-		up, up_u     := shrink(iface.up_new   - iface.up_old)
+		down, down_u := shrink(iface.new_down - iface.old_down)
+		up, up_u     := shrink(iface.new_up   - iface.old_up)
 
 		if i > 0 {
 			b.WriteString(", ")
