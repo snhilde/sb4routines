@@ -4,6 +4,8 @@ import (
 	"net"
 	"errors"
 	"strings"
+	"os"
+	"fmt"
 )
 
 type routine struct {
@@ -90,4 +92,18 @@ func getInterfaces() ([]net.Interface, error) {
 }
 
 func readFile(path string) (int, error) {
+	var n int
+
+	f, err := os.Open(path)
+	if err != nil {
+		return -1, err
+	}
+	defer f.Close()
+
+	_, err = fmt.Fscan(f, &n)
+	if err != nil {
+		return -1, err
+	}
+
+	return n, nil
 }
