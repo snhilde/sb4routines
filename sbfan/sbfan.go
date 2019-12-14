@@ -124,17 +124,10 @@ func (r *routine) findFiles() {
 
 // Read the value of the passed-in file, which will be a speed in RPM.
 func readSpeed(path string) (int, error) {
-	var n int
-
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return -1, err
 	}
 
-	n, err = strconv.Atoi(strings.TrimSpace(string(b)))
-	if err != nil {
-		return -1, err
-	}
-
-	return n, nil
+	return strconv.Atoi(strings.TrimSpace(string(b)))
 }
