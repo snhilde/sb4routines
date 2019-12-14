@@ -31,42 +31,49 @@ func New() *routine {
 func (r *routine) Update() {
 	var out []byte
 
-	// Reset values so we can make sure we found both.
-	r.total = 0
-	r.avail = 0
-
 	proc       := exec.Command("cat", "/proc/meminfo")
 	out, r.err  = proc.Output()
 	if r.err != nil {
 		return
 	}
 
-	lines := strings.Split(string(out), "\n");
-	for _, line := range lines {
-		if strings.HasPrefix(line, "MemTotal") {
-			fields := strings.Fields(line)
-			if len(fields) != 3 {
-				r.err = errors.New("Invalid MemTotal fields")
-				return
-			}
-			r.total = strconv.Atoi(fields[1])
-
-		} else if strings.HasPrefix(line, "MemAvailable") {
-			fields := strings.Fields(line)
-			if len(fields) != 3 {
-				r.err = errors.New("Invalid MemAvailable fields")
-				return
-			}
-			r.avail = strconv.Atoi(fields[1])
-		}
+	r.total, r.avail, r.err = parseCmd(string(out))
+	if r.err != nil {
+		return
 	}
 
 	if r.total == 0 || r.avail == 0 {
 		r.err = errors.New("Failed to parse out memory fields")
 		return
 	}
+
 }
 
 func (r *routine) String() string {
 	return "ram"
+}
+
+func parseCmd(output string) (int, int, error) {
+	var total int
+	var avail int
+
+	lines := strings.Split(string(out), "\n");
+	for _, line := range lines {
+		if strings.HasPrefix(line, "MemTotal") {
+			fields := strings.Fields(line)
+			if len(fields) != 3 {
+				return 0, 0, errors.New("Invalid MemTotal fields")
+			}
+			total = strconv.Atoi(fields[1])
+
+		} else if strings.HasPrefix(line, "MemAvailable") {
+			fields := strings.Fields(line)
+			if len(fields) != 3 {
+				return 0, 0, errors.New("Invalid MemAvailable fields")
+			}
+			avail = strconv.Atoi(fields[1])
+		}
+	}
+
+	return total, avail, nil
 }
