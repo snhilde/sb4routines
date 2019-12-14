@@ -59,6 +59,21 @@ func New(inames ...string) *routine {
 }
 
 func (r *routine) Update() {
+	for i, iface := range r.ilist {
+		down, err := readFile(iface.down_path)
+		if err != nil {
+			r.err = err
+			break
+		}
+		r.ilist[i].down = down
+
+		up, err := readFile(iface.up_path)
+		if err != nil {
+			r.err = err
+			break
+		}
+		r.ilist[i].up = up
+	}
 }
 
 func (r *routine) String() string {
