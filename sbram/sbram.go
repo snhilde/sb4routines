@@ -87,3 +87,6 @@ func parseCmd(output string) (int, int, error) {
 
 	return total, avail, nil
 }
+
+func calcRAM(total int, avail int) (float32, float32, error) {
+}
