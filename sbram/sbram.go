@@ -12,9 +12,9 @@ import (
 // total: total amount of memory
 // used:  amount of memory in current use
 type routine struct {
-	err error
-	total int
-	used  int
+	err   error
+	total float32
+	used  float32
 }
 
 // Make and return a new routine object.
