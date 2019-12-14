@@ -90,7 +90,7 @@ func (r *routine) String() string {
 
 	for i, iface := range r.ilist {
 		down, down_u := shrink(iface.down_new - iface.down_old)
-		up, up_u     := shrink(iface.down_new - iface.down_old)
+		up, up_u     := shrink(iface.up_new   - iface.up_old)
 
 		if i > 0 {
 			b.WriteString(", ")
