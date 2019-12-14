@@ -4,8 +4,14 @@ import (
 	"os/exec"
 	"strings"
 	"errors"
+	"strconv"
 )
 
+// routine is the main object for this package.
+// err:   error encountered along the way, if any
+// total: total amount of memory
+// avail: amount of memory available
+// used:  amount of memory in current use
 type routine struct {
 	err error
 	total int
@@ -13,14 +19,15 @@ type routine struct {
 	used  int
 }
 
+// Make and return a new routine object.
 func New() *routine {
 	return new(routine)
 }
 
-// Unfortunately, we can't use syscall.Sysinfo() or another syscall function, because it doesn't
-// return the necessary information to calculate the actual amount of RAM in use at the moment (namely,
-// it is missing the amount of cached RAM). Instead, we're going to read out /proc/meminfo and grab
-// the values we need from there.
+// Get the memory resources. Unfortunately, we can't use syscall.Sysinfo() or another syscall function, because it
+// doesn't return the necessary information to calculate the actual amount of RAM in use at the moment (namely, it is
+// missing the amount of cached RAM). Instead, we're going to read out /proc/meminfo and grab the values we need from
+// there. All lines of that file have three fields: field name, value, and unit
 func (r *routine) Update() {
 	var out []byte
 
