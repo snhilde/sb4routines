@@ -9,9 +9,11 @@ import (
 )
 
 // routine is the main object for this package.
-// err:   error encountered along the way, if any
-// total: total amount of memory
-// used:  amount of memory in current use
+// err:     error encountered along the way, if any
+// total:   total amount of memory
+// total_u: unit of total memory
+// used:    amount of memory in current use
+// used_u:  unit of used memory
 type routine struct {
 	err     error
 	total   float32
@@ -52,6 +54,7 @@ func (r *routine) Update() {
 	r.used,  r.used_u  = shrink(total - avail)
 }
 
+// Format and print the used and total system memory.
 func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
@@ -60,6 +63,7 @@ func (r *routine) String() string {
 	return fmt.Sprintf("%.1f%c/%.1f%c", r.used, r.used_u, r.total, r.total_u)
 }
 
+// Parse the meminfo file.
 func parseCmd(output string) (int, int, error) {
 	var total int
 	var avail int
