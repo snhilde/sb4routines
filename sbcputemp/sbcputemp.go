@@ -53,13 +53,11 @@ func (r *routine) Update() {
 	for _, file := range r.files {
 		b, err := ioutil.ReadFile(r.path + file.Name())
 		if err != nil {
-			r.err = err
 			continue
 		}
 
 		n, err = strconv.Atoi(strings.TrimSpace(string(b)))
 		if err != nil {
-			r.err = err
 			continue
 		}
 
