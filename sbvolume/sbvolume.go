@@ -2,6 +2,8 @@ package sbvolume
 
 import (
 	"os/exec"
+	"strings"
+	"errors"
 )
 
 type routine struct {
@@ -16,20 +18,17 @@ func New(control string) *routine {
 
 	r.control = control
 
-	// Make sure the user passed a valid control.
-	out, err := r.runCmd()
-	if err != nil {
-		r.err = err
-		return &r
-	}
-
-	// If the control was not valid, we'll get an error message like this:
-	// amixer: Unable to find simple control 'bad_control',0
-
 	return &r
 }
 
 func (r *routine) Update() {
+	out, err := r.runCmd()
+	if err != nil {
+		r.err = err
+		return
+	}
+
+	err = sanityCheck(out)
 	if err != nil {
 		r.err = err
 		return
@@ -52,4 +51,19 @@ func (r *routine) runCmd() (string, error) {
 	}
 
 	return string(out), nil
+}
+
+// Make sure the user passed a valid control.
+// If the control was not valid, we'll get an error message like this:
+// amixer: Unable to find simple control 'bad_control',0
+func sanityCheck(out string) error {
+	lines := strings.Split(out, "\n")
+	if strings.Contains(lines[0], "Unable to find") {
+		fields  := strings.Split(lines[0], ":")
+		err_msg := strings.TrimSpace(fields[1])
+		err_msg  = err_msg[:len(err_msg) - 2]
+		return errors.New(err_msg)
+	}
+
+	return nil
 }
