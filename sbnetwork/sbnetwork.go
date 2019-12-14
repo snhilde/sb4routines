@@ -8,11 +8,22 @@ import (
 	"fmt"
 )
 
+// routine is the main object for this package.
+// err:   error encountered along the way, if any
+// ilist: list of interfaces
 type routine struct {
 	err     error
 	ilist []sbiface
 }
 
+// sbiface groups different pieces of information for a single interface.
+// name:      name of interface
+// down_path: path to rx_bytes file
+// up_path:   path to tx_bytes file
+// old_down:  last reading of rx_bytes file
+// old_up:    last reading of tx_bytes file
+// new_down:  current reading of rx_bytes file
+// new_up:    current reading of tx_bytes file
 type sbiface struct {
 	name      string
 	down_path string
@@ -23,6 +34,7 @@ type sbiface struct {
 	new_up    int
 }
 
+// Return a new routine object populated with either the given interfaces or the active ones.
 func New(inames ...string) *routine {
 	var r       routine
 	var ilist []string
@@ -60,6 +72,7 @@ func New(inames ...string) *routine {
 	return &r
 }
 
+// Get the current readings of the rx/tx files for each interface.
 func (r *routine) Update() {
 	for i, iface := range r.ilist {
 		r.ilist[i].old_down = iface.new_down
@@ -81,6 +94,7 @@ func (r *routine) Update() {
 	}
 }
 
+// Calculate the byte difference for each interface, and format and print it.
 func (r *routine) String() string {
 	var b strings.Builder
 
@@ -101,6 +115,7 @@ func (r *routine) String() string {
 	return b.String()
 }
 
+// Find all network interfaces that are currently active.
 func getInterfaces() ([]string, error) {
 	var inames []string
 
@@ -123,6 +138,7 @@ func getInterfaces() ([]string, error) {
 	return inames, nil
 }
 
+// Read out the contents of the given file.
 func readFile(path string) (int, error) {
 	var n int
 
