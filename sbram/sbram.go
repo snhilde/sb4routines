@@ -12,9 +12,11 @@ import (
 // total: total amount of memory
 // used:  amount of memory in current use
 type routine struct {
-	err   error
-	total float32
-	used  float32
+	err     error
+	total   float32
+	total_u rune
+	used    float32
+	used_u  rune
 }
 
 // Make and return a new routine object.
@@ -46,6 +48,7 @@ func (r *routine) Update() {
 	}
 
 	r.total, r.total_u = shrink(total)
+	r.used,  r.used_u  = shrink(total - avail)
 }
 
 func (r *routine) String() string {
@@ -93,10 +96,11 @@ func shrink(memory int) (float32, rune) {
 	var units = [...]rune{'B', 'K', 'M', 'G', 'T', 'P', 'E'}
 	var i int
 
-	for memory > 1024 {
-		memory /= 1024
+	memory_f := float32(memory)
+	for memory_f > 1024 {
+		memory_f /= 1024
 		i++
 	}
 
-	return memory, units[i]
+	return memory_f, units[i]
 }
