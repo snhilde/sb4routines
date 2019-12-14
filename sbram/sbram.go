@@ -1,7 +1,7 @@
 package sbram
 
 import (
-	"os/exec"
+	"io/ioutil"
 	"strings"
 	"errors"
 	"strconv"
@@ -32,14 +32,13 @@ func New() *routine {
 // missing the amount of cached RAM). Instead, we're going to read out /proc/meminfo and grab the values we need from
 // there. All lines of that file have three fields: field name, value, and unit
 func (r *routine) Update() {
-	proc     := exec.Command("cat", "/proc/meminfo")
-	out, err := proc.Output()
+	file, err := ioutil.ReadFile("/proc/meminfo")
 	if err != nil {
 		r.err = err
 		return
 	}
 
-	total, avail, err := parseCmd(string(out))
+	total, avail, err := parseFile(string(file))
 	if err != nil {
 		r.err = err
 		return
@@ -64,7 +63,7 @@ func (r *routine) String() string {
 }
 
 // Parse the meminfo file.
-func parseCmd(output string) (int, int, error) {
+func parseFile(output string) (int, int, error) {
 	var total int
 	var avail int
 	var err   error
