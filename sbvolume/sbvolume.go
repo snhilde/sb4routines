@@ -12,7 +12,7 @@ type routine struct {
 	err     error
 	control string
 	vol     int
-	mute    bool
+	muted   bool
 }
 
 func New(control string) *routine {
@@ -24,7 +24,8 @@ func New(control string) *routine {
 }
 
 func (r *routine) Update() {
-	var found_vol = false
+	r.muted = false
+	r.vol   = -1
 
 	out, err := r.runCmd()
 	if err != nil {
@@ -41,8 +42,7 @@ func (r *routine) Update() {
 			for _, field := range fields {
 				field = strings.Trim(field, "[]")
 				if field == "off" {
-					r.mute = true
-					return
+					r.muted = true
 				} else if strings.HasSuffix(field, "%") {
 					s        := strings.TrimRight(field, "%")
 					vol, err := strconv.Atoi(s)
@@ -50,15 +50,14 @@ func (r *routine) Update() {
 						r.err = err
 						return
 					}
-					r.vol     = normalize(vol)
-					found_vol = true
+					r.vol = normalize(vol)
 				}
 			}
 			break;
 		}
 	}
 
-	if !found_vol {
+	if r.vol < 0 {
 		r.err = errors.New("No volume found for " + r.control)
 	}
 }
@@ -66,6 +65,10 @@ func (r *routine) Update() {
 func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
+	}
+
+	if r.muted {
+		return "Vol mute"
 	}
 
 	return fmt.Sprintf("Vol %v%%", r.vol)
