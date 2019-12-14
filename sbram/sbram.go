@@ -37,6 +37,11 @@ func (r *routine) Update() {
 			}
 
 		} else if strings.HasPrefix(line, "MemAvailable") {
+			fields := strings.Fields(line)
+			if len(fields) != 3 {
+				r.err = errors.New("Invalid MemAvailable fields")
+				return
+			}
 		}
 	}
 
