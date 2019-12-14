@@ -24,37 +24,43 @@ func New(control string) *routine {
 }
 
 func (r *routine) Update() {
+	var found_vol = false
+
 	out, err := r.runCmd()
 	if err != nil {
 		r.err = err
 		return
 	}
 
-	// Find the line that has the percentage volume in it.
+	// Find the line that has the percentage volume and mute status in it.
 	lines := strings.Split(out, "\n")
 	for _, line := range lines {
 		if strings.Contains(line, "Playback") && strings.Contains(line, "%]") {
-			// We found it. Pull out the volume.
+			// We found it. Check the mute status, then pull out the volume.
 			fields := strings.Fields(line)
 			for _, field := range fields {
-				if strings.Contains(field, "%]") {
-					s        := strings.Trim(field, "[]")
-					s         = strings.TrimRight(s, "%")
+				field = strings.Trim(field, "[]")
+				if field == "off" {
+					r.mute = true
+					return
+				} else if strings.HasSuffix(field, "%") {
+					s        := strings.TrimRight(field, "%")
 					vol, err := strconv.Atoi(s)
 					if err != nil {
 						r.err = err
 						return
 					}
-
-					r.vol = normalize(vol)
-					return
+					r.vol     = normalize(vol)
+					found_vol = true
 				}
 			}
+			break;
 		}
 	}
 
-	// If we're here, then we didn't find a volume.
-	r.err = errors.New("No volume found for " + r.control)
+	if !found_vol {
+		r.err = errors.New("No volume found for " + r.control)
+	}
 }
 
 func (r *routine) String() string {
