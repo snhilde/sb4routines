@@ -8,6 +8,11 @@ import (
 	"fmt"
 )
 
+// routine is the main object for this package.
+// err:     error encountered along the way, if any
+// control: control to query, as passed in by called
+// vol:     system volume, in multiple of ten, as percentage of max
+// muted:   true if volume is muted
 type routine struct {
 	err     error
 	control string
@@ -15,6 +20,7 @@ type routine struct {
 	muted   bool
 }
 
+// Store the passed-in control value and return a new routine object.
 func New(control string) *routine {
 	var r routine
 
@@ -23,6 +29,7 @@ func New(control string) *routine {
 	return &r
 }
 
+// Run the 'amixer' command and parse the output for mute status and volume percentage.
 func (r *routine) Update() {
 	r.muted = false
 	r.vol   = -1
@@ -62,6 +69,7 @@ func (r *routine) Update() {
 	}
 }
 
+// Print either an error, the mute status, or the volume percentage.
 func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
@@ -74,6 +82,7 @@ func (r *routine) String() string {
 	return fmt.Sprintf("Vol %v%%", r.vol)
 }
 
+// Run the actual 'amixer' command, with the given control.
 func (r *routine) runCmd() (string, error) {
 	cmd      := exec.Command("amixer", "get", r.control)
 	out, err := cmd.Output()
@@ -84,7 +93,7 @@ func (r *routine) runCmd() (string, error) {
 	return string(out), nil
 }
 
-// This will ensure that the volumes are multiples of 10 and look nicer.
+// Ensure that the volume is a multiple of 10 (so it looks nicer).
 func normalize(vol int) int {
 	return (vol+5) / 10 * 10
 }
