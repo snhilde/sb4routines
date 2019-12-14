@@ -8,6 +8,9 @@ import (
 
 type routine struct {
 	err error
+	total int
+	avail int
+	used  int
 }
 
 func New() *routine {
@@ -45,6 +48,10 @@ func (r *routine) Update() {
 		}
 	}
 
+	if r.total == 0 || r.avail == 0 {
+		r.err = errors.New("Failed to parse out memory fields")
+		return
+	}
 }
 
 func (r *routine) String() string {
