@@ -13,10 +13,10 @@ type routine struct {
 
 type sbiface struct {
 	iface     net.Interface
-	up        int
+	down_path string
 	down      int
 	up_path   string
-	down_path string
+	up        int
 }
 
 func New(inames ...string) *routine {
@@ -47,9 +47,9 @@ func New(inames ...string) *routine {
 		r.err = errors.New("No interfaces found")
 	} else {
 		for _, iface := range ilist {
-			up_path   := "/sys/class/net/" + iface.Name + "/statistics/rx_bytes"
-			down_path := "/sys/class/net/" + iface.Name + "/statistics/tx_bytes"
-			r.ilist = append(r.ilist, sbiface{iface: iface, up_path: up_path, down_path: down_path})
+			down_path := "/sys/class/net/" + iface.Name + "/statistics/rx_bytes"
+			up_path   := "/sys/class/net/" + iface.Name + "/statistics/tx_bytes"
+			r.ilist = append(r.ilist, sbiface{iface: iface, down_path: down_path, up_path: up_path})
 		}
 	}
 
