@@ -10,12 +10,10 @@ import (
 // routine is the main object for this package.
 // err:   error encountered along the way, if any
 // total: total amount of memory
-// avail: amount of memory available
 // used:  amount of memory in current use
 type routine struct {
 	err error
 	total int
-	avail int
 	used  int
 }
 
