@@ -21,8 +21,8 @@ func New() *routine {
 
 // Run the command and capture the output.
 func (r *routine) Update() {
-	proc     := exec.Command("nordvpn", "status")
-	out, err := proc.Output()
+	cmd      := exec.Command("nordvpn", "status")
+	out, err := cmd.Output()
 	if err != nil {
 		r.err = err
 		return
