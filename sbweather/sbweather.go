@@ -9,6 +9,12 @@ import (
 	"fmt"
 )
 
+// routine is the main object for this package.
+// err:    error encountered along the way, if any
+// client: HTTP client to reuse for all requests out
+// zip:    user-supplied zip code for where the temperature should reflect
+// url:    NWS-provided URL for getting the temperature, as found during the init
+// temp:   current temperature for the provided zip code
 type routine struct {
 	err    error
 	client http.Client
@@ -17,6 +23,7 @@ type routine struct {
 	temp   int
 }
 
+// Sasnity-check zip code, and return new routine object.
 func New(zip string) *routine {
 	var r routine
 
@@ -35,6 +42,7 @@ func New(zip string) *routine {
 	return &r
 }
 
+// Get the current hourly temperature. Also, if first run of the session, initialize object.
 func (r *routine) Update() {
 	if r.url == "" {
 		// Get coordinates.
@@ -62,6 +70,7 @@ func (r *routine) Update() {
 	r.temp = temp
 }
 
+// Format and print current temperature.
 func (r *routine) String() string {
 	if r.err != nil {
 		return r.err.Error()
@@ -123,7 +132,7 @@ func getCoords(client http.Client, zip string) (string, string, error) {
 }
 
 // Query the NWS to determine which URL we should be using for getting the weather forecast.
-// Our value should be within the "properties" field, under key "forecast".
+// Our value should be here: properties -> forecast.
 func getURL(client http.Client, lat string, long string) (string, error) {
 	type props struct {
 		Properties map[string]interface{} `json:"properties"`
@@ -165,13 +174,13 @@ func getURL(client http.Client, lat string, long string) (string, error) {
 	return url, nil
 }
 
+// Get the current temperature from the NWS database.
+// Our value should be here: properties -> periods -> (latest period) -> temperature.
 func getTemp(client http.Client, url string) (int, error) {
 	type temp struct {
 		Properties struct {
 			Periods []interface{} `json:"periods"`
 		} `json:"properties"`
-
-		// Properties map[string]interface{} `json:"properties"`
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
