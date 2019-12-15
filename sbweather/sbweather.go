@@ -43,7 +43,6 @@ func (r *routine) Update() {
 			r.err = err
 			return
 		}
-		fmt.Println(lat, long)
 
 		// Get forecast URL.
 		url, err := getURL(r.client, lat, long)
@@ -52,7 +51,6 @@ func (r *routine) Update() {
 			return
 		}
 		r.url = url
-		fmt.Println(url)
 	}
 
 	// Get hourly temperature.
@@ -69,7 +67,7 @@ func (r *routine) String() string {
 		return r.err.Error()
 	}
 
-	return "weather"
+	return fmt.Sprintf("weather: %v °F", r.temp)
 }
 
 // Get the geographic coordinates for the provided zip code.
