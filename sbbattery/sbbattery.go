@@ -18,7 +18,7 @@ type routine struct {
 }
 
 // Read the maximum capacity of the battery and return struct.
-func New() *routine {
+func New(colors [3]string) *routine {
 	var r routine
 
 	// Error will be handled in both Update() and String().
