@@ -135,7 +135,10 @@ func getCoords(client http.Client, zip string) (string, string, error) {
 // Our value should be here: properties -> forecast.
 func getURL(client http.Client, lat string, long string) (string, error) {
 	type props struct {
-		Properties map[string]interface{} `json:"properties"`
+		// Properties map[string]interface{} `json:"properties"`
+		Properties struct {
+			Forecast string
+		}`json:"properties"`
 	}
 
 	url      := "https://api.weather.gov/points/" + lat + "," + long
@@ -162,13 +165,9 @@ func getURL(client http.Client, lat string, long string) (string, error) {
 		return "", err
 	}
 
-	if len(p.Properties) == 0 {
-		return "", errors.New("Received invalid properties map")
-	}
-
-	url = p.Properties["forecast"].(string)
+	url = p.Properties.Forecast
 	if url == "" {
-		return "", errors.New("Missing forecast URL in response")
+		return "", errors.New("Missing temperature URL")
 	}
 
 	return url, nil
