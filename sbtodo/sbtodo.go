@@ -24,7 +24,7 @@ type routine struct {
 
 // Return a new routine object.
 // path is the absolute path to the TODO file.
-func New(path string) *routine {
+func New(path string, colors [3]string) *routine {
 	var r routine
 
 	r.path = path
