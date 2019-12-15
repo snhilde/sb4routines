@@ -23,7 +23,7 @@ type routine struct {
 	temp   int
 }
 
-// Sasnity-check zip code, and return new routine object.
+// Sanity-check zip code, and return new routine object.
 func New(zip string) *routine {
 	var r routine
 
