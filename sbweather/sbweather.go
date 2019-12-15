@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // routine is the main object for this package.
@@ -15,12 +16,16 @@ import (
 // zip:    user-supplied zip code for where the temperature should reflect
 // url:    NWS-provided URL for getting the temperature, as found during the init
 // temp:   current temperature for the provided zip code
+// high:   forecast high
+// low:    forecast low
 type routine struct {
 	err    error
 	client http.Client
 	zip    string
 	url    string
 	temp   int
+	high   int
+	low    int
 }
 
 // Sanity-check zip code, and return new routine object.
@@ -68,6 +73,14 @@ func (r *routine) Update() {
 		return
 	}
 	r.temp = temp
+
+	high, low, err := getForecast(r.client, r.url)
+	if err != nil {
+		r.err = err
+		return
+	}
+	r.high = high
+	r.low  = low
 }
 
 // Format and print current temperature.
@@ -76,7 +89,7 @@ func (r *routine) String() string {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("weather: %v °F", r.temp)
+	return fmt.Sprintf("weather: %v °F (%v/%v)", r.temp, r.high, r.low)
 }
 
 // Get the geographic coordinates for the provided zip code.
@@ -205,16 +218,82 @@ func getTemp(client http.Client, url string) (int, error) {
 		return -1, err
 	}
 
+	// Get the list of weather readings.
 	periods := t.Properties.Periods
 	if len(periods) == 0 {
 		return -1, errors.New("Missing hourly temperature periods")
 	}
 
+	// Use the most recent reading.
 	latest := periods[0].(map[string]interface{})
 	if len(latest) == 0 {
 		return -1, errors.New("Missing current temperature")
 	}
 
+	// Get just the temperature reading.
 	temperature := latest["temperature"].(float64)
 	return int(temperature), nil
+}
+
+func getForecast(client http.Client, url string) (int, int, error) {
+	var  high     float64
+	var  low      float64
+	type forecast struct {
+		Properties struct {
+			Periods []map[string]interface{} `json:"periods"`
+		} `json:"properties"`
+	}
+
+	// Calculate tomorrow's day of the week.
+	t    := time.Now()
+	t     = t.Add(time.Hour * 24)
+	d    := t.Weekday()
+	wday := d.String()
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return -1, -1, err
+	}
+	req.Header.Set("accept", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return -1, -1, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return -1, -1, err
+	}
+
+	f   := forecast{}
+	err  = json.Unmarshal(body, &f)
+	if err != nil {
+		return -1, -1, err
+	}
+
+	// Get the list of forecasts.
+	periods := f.Properties.Periods
+	if len(periods) == 0 {
+		return -1, -1, errors.New("Missing forecast periods")
+	}
+
+	// Iterate through the list until we find the forecast for tomorrow.
+	for _, f := range periods {
+		name := f["name"].(string)
+		if name == wday {
+			// We'll get tomorrow's high from here.
+			high = f["temperature"].(float64)
+		} else if name == wday + " Night" {
+			// We'll get tomorrow's low from here.
+			low = f["temperature"].(float64)
+
+			// This is all we need from the forecast, so we can exit now.
+			return int(high), int(low), nil
+		}
+	}
+
+	// If we're here, then we didn't find the forecast.
+	return -1, -1, errors.New("Failed to determine forecast")
 }
