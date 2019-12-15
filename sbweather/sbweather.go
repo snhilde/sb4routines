@@ -17,11 +17,6 @@ type routine struct {
 	long   string
 }
 
-type coords struct {
-	Status int                 `json:"status"`
-	Output []map[string]string `json:"output"`
-}
-
 func New(zip string) *routine {
 	var r routine
 
@@ -42,12 +37,21 @@ func New(zip string) *routine {
 
 func (r *routine) Update() {
 	if r.lat == "" || r.long == "" {
+		// Get coordinates.
 		lat, long, err := getCoords(r.client, r.zip)
 		if err != nil {
 			r.err = err
 			return
 		}
 		fmt.Println(lat, long)
+
+		// Get zone and identifiers.
+		url, err := getURL(r.client, lat, long)
+		if err != nil {
+			r.err = err
+			return
+		}
+		fmt.Println(url)
 	}
 }
 
@@ -59,9 +63,15 @@ func (r *routine) String() string {
 	return "weather"
 }
 
+// Get the geographic coordinates for the provided zip code.
 // We should receive a response in this format:
 // {"status":1,"output":[{"zip":"90210","latitude":"34.103131","longitude":"-118.416253"}]}
 func getCoords(client http.Client, zip string) (string, string, error) {
+	type coords struct {
+		Status int                 `json:"status"`
+		Output []map[string]string `json:"output"`
+	}
+
 	url      := "https://api.promaptools.com/service/us/zip-lat-lng/get/?zip=" + zip + "&key=17o8dysaCDrgv1c"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -103,4 +113,47 @@ func getCoords(client http.Client, zip string) (string, string, error) {
 	}
 
 	return lat, long, nil
+}
+
+// Query the NWS to determine which URL we should be using for getting the weather forecast.
+// Our value should be within the "properties" field, under key "forecast".
+func getURL(client http.Client, lat string, long string) (string, error) {
+	type props struct {
+		Properties map[string]interface{} `json:"properties"`
+	}
+
+	url      := "https://api.weather.gov/points/" + lat + "," + long
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("accept", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	p   := props{}
+	err  = json.Unmarshal(body, &p)
+	if err != nil {
+		return "", err
+	}
+
+	if len(p.Properties) == 0 {
+		return "", errors.New("Received invalid properties map")
+	}
+
+	url = p.Properties["forecast"].(string)
+	if url == "" {
+		return "", errors.New("Missing forecast URL in response")
+	}
+
+	return url, nil
 }
