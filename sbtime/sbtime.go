@@ -14,7 +14,7 @@ type routine struct {
 }
 
 // Create a new routine object with the current time.
-func New(format string) *routine {
+func New(format string, colors [3]string) *routine {
 	var r routine
 
 	r.time   = time.Now()
