@@ -18,7 +18,7 @@ type routine struct {
 }
 
 // Return a new rountine object.
-func New() *routine {
+func New(colors [3]string) *routine {
 	return new(routine)
 }
 
