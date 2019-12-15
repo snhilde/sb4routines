@@ -36,7 +36,7 @@ type sbiface struct {
 }
 
 // Return a new routine object populated with either the given interfaces or the active ones.
-func New(inames ...string) *routine {
+func New(inames []string, colors [3]string) *routine {
 	var r       routine
 	var ilist []string
 	var err     error
