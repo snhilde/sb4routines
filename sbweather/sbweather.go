@@ -13,8 +13,8 @@ type routine struct {
 	err    error
 	client http.Client
 	zip    string
-	lat    string
-	long   string
+	url    string
+	temp   int
 }
 
 func New(zip string) *routine {
@@ -36,7 +36,7 @@ func New(zip string) *routine {
 }
 
 func (r *routine) Update() {
-	if r.lat == "" || r.long == "" {
+	if r.url == "" {
 		// Get coordinates.
 		lat, long, err := getCoords(r.client, r.zip)
 		if err != nil {
@@ -45,14 +45,23 @@ func (r *routine) Update() {
 		}
 		fmt.Println(lat, long)
 
-		// Get zone and identifiers.
+		// Get forecast URL.
 		url, err := getURL(r.client, lat, long)
 		if err != nil {
 			r.err = err
 			return
 		}
+		r.url = url
 		fmt.Println(url)
 	}
+
+	// Get hourly temperature.
+	temp, err := getTemp(r.client, r.url + "/hourly")
+	if err != nil {
+		r.err = err
+		return
+	}
+	r.temp = temp
 }
 
 func (r *routine) String() string {
@@ -156,4 +165,50 @@ func getURL(client http.Client, lat string, long string) (string, error) {
 	}
 
 	return url, nil
+}
+
+func getTemp(client http.Client, url string) (int, error) {
+	type temp struct {
+		Properties struct {
+			Periods []interface{} `json:"periods"`
+		} `json:"properties"`
+
+		// Properties map[string]interface{} `json:"properties"`
+	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return -1, err
+	}
+	req.Header.Set("accept", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return -1, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return -1, err
+	}
+
+	t   := temp{}
+	err  = json.Unmarshal(body, &t)
+	if err != nil {
+		return -1, err
+	}
+
+	periods := t.Properties.Periods
+	if len(periods) == 0 {
+		return -1, errors.New("Missing hourly temperature periods")
+	}
+
+	latest := periods[0].(map[string]interface{})
+	if len(latest) == 0 {
+		return -1, errors.New("Missing current temperature")
+	}
+
+	temperature := latest["temperature"].(float64)
+	return int(temperature), nil
 }
