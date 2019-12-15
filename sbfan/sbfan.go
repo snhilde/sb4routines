@@ -31,7 +31,7 @@ type routine struct {
 }
 
 // Search around in the base directory for a pair of max and current files, and return a new routine object.
-func New() *routine {
+func New(colors [3]string) *routine {
 	var r routine
 
 	// Find the max fan speed file and read its value.
