@@ -31,7 +31,7 @@ type fs struct {
 }
 
 // Copy over the provided filesystem paths and return a new routine object.
-func New(paths []string) *routine {
+func New(paths []string, colors [3]string) *routine {
 	var r routine
 
 	for _, path := range paths {
