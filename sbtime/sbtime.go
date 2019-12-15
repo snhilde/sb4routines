@@ -13,7 +13,7 @@ type routine struct {
 	format string
 }
 
-// Create a new routine object and get the current time.
+// Create a new routine object with the current time.
 func New(format string) *routine {
 	var r routine
 
