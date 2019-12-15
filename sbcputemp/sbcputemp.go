@@ -25,7 +25,7 @@ type routine struct {
 }
 
 // Find our device directory, build a list of all the temperature sensors in it, and return a new object.
-func New() *routine {
+func New(colors [3]string) *routine {
 	var r routine
 
 	// Error will be handled in Update() and String().
