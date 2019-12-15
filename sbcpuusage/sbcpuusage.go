@@ -30,7 +30,7 @@ type stats struct {
 }
 
 // Get current CPU stats and return routine object.
-func New() *routine {
+func New(colors [3]string) *routine {
 	var r routine
 
 	r.threads, r.err = numThreads()
