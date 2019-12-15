@@ -235,20 +235,33 @@ func getTemp(client http.Client, url string) (int, error) {
 	return int(temperature), nil
 }
 
+// Get the forecasted temperatures from the NWS database.
+// Our values should be here: properties -> periods -> (chosen periods) -> temperature.
+// We're going to use these rules to determine which day's forecast we want:
+//   1. If it's before noon, we'll use the current day.
 func getForecast(client http.Client, url string) (int, int, error) {
 	var  high     float64
 	var  low      float64
+	var  high_s   string
+	var  low_s    string
+
 	type forecast struct {
 		Properties struct {
 			Periods []map[string]interface{} `json:"periods"`
 		} `json:"properties"`
 	}
 
-	// Calculate tomorrow's day of the week.
-	t    := time.Now()
-	t     = t.Add(time.Hour * 24)
-	d    := t.Weekday()
-	wday := d.String()
+	// Determine which day's forecast we want.
+	t := time.Now()
+	if (t.Hour() < 12) {
+		high_s = "Today"
+		low_s  = "Tonight"
+	} else {
+		t       = t.Add(time.Hour * 24)
+		d      := t.Weekday()
+		high_s  = d.String()
+		low_s   = high_s + " Night"
+	}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -281,12 +294,13 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	// Iterate through the list until we find the forecast for tomorrow.
 	for _, f := range periods {
+		fmt.Println(f)
 		name := f["name"].(string)
-		if name == wday {
-			// We'll get tomorrow's high from here.
+		if name == high_s {
+			// We'll get the high from here.
 			high = f["temperature"].(float64)
-		} else if name == wday + " Night" {
-			// We'll get tomorrow's low from here.
+		} else if name == low_s {
+			// We'll get the low from here.
 			low = f["temperature"].(float64)
 
 			// This is all we need from the forecast, so we can exit now.
