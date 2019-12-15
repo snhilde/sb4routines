@@ -21,7 +21,7 @@ type routine struct {
 }
 
 // Store the passed-in control value and return a new routine object.
-func New(control string) *routine {
+func New(control string, colors [3]string) *routine {
 	var r routine
 
 	r.control = control
