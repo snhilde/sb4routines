@@ -29,7 +29,7 @@ type routine struct {
 }
 
 // Sanity-check zip code, and return new routine object.
-func New(zip string) *routine {
+func New(zip string, colors [3]string) *routine {
 	var r routine
 
 	if len(zip) != 5 {
