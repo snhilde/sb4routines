@@ -10,15 +10,17 @@ import (
 var COLOR_END = "^d^"
 
 // A routine is the main object for the sbtime package.
-// error:  error in colors, if any
-// time:   current timestamp
-// format: format for displaying time
-// colors: trio of user-provided colors for displaying various states
+// error:    error in colors, if any
+// time:     current timestamp
+// format_a: format for displaying time, when colons are displayed (every other second)
+// format_b: format for displaying time, when colons are blinked out (every other second)
+// colors:   trio of user-provided colors for displaying various states
 type routine struct {
-	err    error
-	time   time.Time
-	format string
-	colors struct {
+	err      error
+	time     time.Time
+	format_a string
+	format_b string
+	colors   struct {
 		normal  string
 		warning string
 		error   string
@@ -29,8 +31,9 @@ type routine struct {
 func New(format string, colors ...[3]string) *routine {
 	var r routine
 
-	r.format = format
-	r.time   = time.Now()
+	r.format_a = format
+	r.format_b = strings.ReplaceAll(format, ":", " ")
+	r.time     = time.Now()
 
 	// Do a minor sanity check on the color codes.
 	if len(colors) == 1 {
@@ -63,8 +66,8 @@ func (r *routine) String() string {
 	}
 
 	if r.time.Second() % 2 == 0 {
-		return r.colors.normal + r.time.Format(r.format) + COLOR_END
+		return r.colors.normal + r.time.Format(r.format_a) + COLOR_END
 	} else {
-		return r.colors.normal + r.time.Format(r.format) + COLOR_END
+		return r.colors.normal + r.time.Format(r.format_b) + COLOR_END
 	}
 }
