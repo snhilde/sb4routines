@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+const (
+	COLOR_END = "^d^"
+)
+
 // A routine is the main object for the sbtime package.
 // error:  error in colors, if any
 // time:   current timestamp
@@ -37,9 +41,9 @@ func New(format string, colors [3]string) *routine {
 			return &r
 		}
 	}
-	r.colors.normal  = colors[0]
-	r.colors.warning = colors[1]
-	r.colors.error   = colors[2]
+	r.colors.normal  = "^c" + colors[0] + "^"
+	r.colors.warning = "^c" + colors[1] + "^"
+	r.colors.error   = "^c" + colors[2] + "^"
 
 	return &r
 }

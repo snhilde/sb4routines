@@ -8,6 +8,10 @@ import (
 	"fmt"
 )
 
+const (
+	COLOR_END = "^d^"
+)
+
 // routine is the main object for this package.
 // err:     error encountered along the way, if any
 // control: control to query, as passed in by called
@@ -39,9 +43,9 @@ func New(control string, colors [3]string) *routine {
 			return &r
 		}
 	}
-	r.colors.normal  = colors[0]
-	r.colors.warning = colors[1]
-	r.colors.error   = colors[2]
+	r.colors.normal  = "^c" + colors[0] + "^"
+	r.colors.warning = "^c" + colors[1] + "^"
+	r.colors.error   = "^c" + colors[2] + "^"
 
 	return &r
 }

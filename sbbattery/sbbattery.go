@@ -8,6 +8,10 @@ import (
 	"fmt"
 )
 
+const (
+	COLOR_END = "^d^"
+)
+
 // Main type for package.
 // err:    error encountered along the way, if any
 // max:    maximum capacity of battery
@@ -35,9 +39,9 @@ func New(colors [3]string) *routine {
 			return &r
 		}
 	}
-	r.colors.normal  = colors[0]
-	r.colors.warning = colors[1]
-	r.colors.error   = colors[2]
+	r.colors.normal  = "^c" + colors[0] + "^"
+	r.colors.warning = "^c" + colors[1] + "^"
+	r.colors.error   = "^c" + colors[2] + "^"
 
 	// Error will be handled in both Update() and String().
 	r.max, r.err = readFile("/sys/class/power_supply/BAT0/charge_full")
@@ -68,11 +72,21 @@ func (r *routine) Update() {
 
 // Print formatted percentage of battery left.
 func (r *routine) String() string {
+	var c string
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("%v%% BAT", r.perc)
+	if r.perc > 25 {
+		c = r.colors.normal
+	} else if r.perc > 10 {
+		c = r.colors.warning
+	} else {
+		c = r.colors.error
+	}
+
+	return fmt.Sprintf("%s%v%% BAT%s", c, r.perc, COLOR_END)
 }
 
 // Read out value from file.
