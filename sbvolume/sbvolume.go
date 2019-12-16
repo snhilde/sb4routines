@@ -97,10 +97,10 @@ func (r *routine) String() string {
 	}
 
 	if r.muted {
-		return "Vol mute"
+		return r.colors.warning + "Vol mute" + COLOR_END
 	}
 
-	return fmt.Sprintf("Vol %v%%", r.vol)
+	return fmt.Sprintf("%sVol %v%%%s", r.colors.normal, r.vol, COLOR_END)
 }
 
 // Run the actual 'amixer' command, with the given control.

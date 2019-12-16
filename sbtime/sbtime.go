@@ -60,8 +60,8 @@ func (r *routine) String() string {
 	}
 
 	if r.time.Second() % 2 == 0 {
-		return r.time.Format(r.format)
+		return r.colors.normal + r.time.Format(r.format) + COLOR_END
 	} else {
-		return r.time.Format(r.format)
+		return r.colors.normal + r.time.Format(r.format) + COLOR_END
 	}
 }

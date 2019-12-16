@@ -86,11 +86,21 @@ func (r *routine) Update() {
 
 // Print the formatted current speed in RPM.
 func (r *routine) String() string {
+	var c string
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("%v RPM", r.out)
+	if r.perc < 75 {
+		c = r.colors.normal
+	} else if r.perc < 90 {
+		c = r.colors.warning
+	} else {
+		c = r.colors.error
+	}
+
+	return fmt.Sprintf("%s%v RPM%s", c, r.out, COLOR_END)
 }
 
 // Find the file that we'll monitor for the fan speed.

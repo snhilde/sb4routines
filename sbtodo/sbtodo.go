@@ -105,6 +105,7 @@ func (r *routine) String() string {
 	}
 
 	r.line1 = strings.TrimSpace(r.line1)
+	b.WriteString(r.colors.normal)
 	if len(r.line1) > 0 {
 		// We have content in the first line. Start by adding that.
 		b.WriteString(r.line1)
@@ -127,6 +128,7 @@ func (r *routine) String() string {
 			b.WriteString("Finished")
 		}
 	}
+	b.WriteString(COLOR_END)
 
 	return b.String()
 }

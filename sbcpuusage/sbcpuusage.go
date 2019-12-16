@@ -59,7 +59,10 @@ func New(colors [3]string) *routine {
 		return &r
 	}
 
-	r.readFile(&(r.old_stats))
+	err := readFile(&(r.old_stats))
+	if err != nil {
+		r.err = err
+	}
 
 	return &r
 }
@@ -68,8 +71,9 @@ func New(colors [3]string) *routine {
 func (r *routine) Update() {
 	var new_stats stats
 
-	r.readFile(&new_stats)
-	if r.err != nil {
+	err := readFile(&new_stats)
+	if err != nil {
+		r.err = err
 		return
 	}
 
@@ -97,35 +101,43 @@ func (r *routine) Update() {
 
 // Print formatted CPU percentage.
 func (r *routine) String() string {
+	var c string
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("%2d%% CPU", r.perc)
+	if r.perc < 75 {
+		c = r.colors.normal
+	} else if r.perc < 90 {
+		c = r.colors.warning
+	} else {
+		c = r.colors.error
+	}
+
+	return fmt.Sprintf("%s%2d%% CPU%s", c, r.perc, COLOR_END)
 }
 
 // Open /proc/stat and read out the CPU stats from the first line.
-func (r *routine) readFile(new_stats *stats) {
+func readFile(new_stats *stats) error {
 	// The first line of /proc/stat will look like this:
 	// "cpu userVal niceVal sysVal idleVal ..."
-	var file *os.File
-	var line  string
-
-	file, r.err = os.Open("/proc/stat")
-	if r.err != nil {
-		return
+	f, err := os.Open("/proc/stat")
+	if err != nil {
+		return err
 	}
-	defer file.Close()
+	defer f.Close()
 
-	reader := bufio.NewReader(file)
+	reader := bufio.NewReader(f)
 
-	line, r.err = reader.ReadString('\n')
-	if r.err != nil {
-		return
+	line, err := reader.ReadString('\n')
+	if err != nil {
+		return err
 	}
 
 	// Error will be handled in String().
-	_, r.err = fmt.Sscanf(line, "cpu %v %v %v %v", &(new_stats.user), &(new_stats.nice), &(new_stats.sys), &(new_stats.idle))
+	_, err = fmt.Sscanf(line, "cpu %v %v %v %v", &(new_stats.user), &(new_stats.nice), &(new_stats.sys), &(new_stats.idle))
+	return err
 }
 
 // The shell command 'lscpu' will return a variety of CPU information, including the number of threads
@@ -143,10 +155,10 @@ func numThreads() (int, error) {
 	for _, line := range lines {
 		if strings.HasPrefix(line, "Thread(s) per core") {
 			fields := strings.Fields(line)
-			if len(fields) != 2 {
+			if len(fields) != 4 {
 				return -1, errors.New("Invalid fields")
 			}
-			return strconv.Atoi(fields[1])
+			return strconv.Atoi(fields[3])
 		}
 	}
 

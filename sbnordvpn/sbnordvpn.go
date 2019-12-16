@@ -13,10 +13,12 @@ const (
 // routine is the main object in the package.
 // err:    error encountered along the way, if any
 // b:      buffer to hold connnection string
+// color:  current color of the 3 provided
 // colors: trio of user-provided colors for displaying various states
 type routine struct {
 	err    error
 	b      strings.Builder
+	color  string
 	colors struct {
 		normal  string
 		warning string
@@ -60,7 +62,7 @@ func (r *routine) String() string {
 		return "NordVPN: " + r.err.Error()
 	}
 
-	return r.b.String()
+	return r.color + r.b.String() + COLOR_END
 }
 
 // Parse the command's output.
@@ -83,6 +85,7 @@ func (r *routine) parseCommand(s string) {
 	//     Please check your internet connection and try again.
 	lines := strings.Split(s, "\n");
 	if lines[0] == "Status: Connected" {
+		r.color = r.colors.normal
 		for _, line := range lines {
 			if strings.HasPrefix(line, "City") {
 				fields := strings.Fields(line)
@@ -98,12 +101,15 @@ func (r *routine) parseCommand(s string) {
 		}
 
 	} else if lines[0] == "Status: Disconnected" {
-		r.err = errors.New("Disconnected")
+		r.color = r.colors.warning
+		r.err   = errors.New("Disconnected")
 
 	} else if lines[0] == "Please check your internet connection and try again." {
-		r.err = errors.New("Internet Down")
+		r.color = r.colors.error
+		r.err   = errors.New("Internet Down")
 
 	} else {
-		r.err = errors.New(lines[0])
+		r.color = r.colors.error
+		r.err   = errors.New(lines[0])
 	}
 }

@@ -64,9 +64,19 @@ func (r *routine) Update() {
 
 // Print the 3 load averages with 2 decimal places of precision.
 func (r *routine) String() string {
+	var c string
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("%.2f %.2f %.2f", r.load_1, r.load_5, r.load_15)
+	if r.load_1 >= 2 || r.load_5 >= 2 || r.load_15 >= 2 {
+		c = r.colors.error
+	} else if r.load_1 >= 1 || r.load_5 >= 1 || r.load_15 >= 1 {
+		c = r.colors.warning
+	} else {
+		c = r.colors.normal
+	}
+
+	return fmt.Sprintf("%s%.2f %.2f %.2f%s", c, r.load_1, r.load_5, r.load_15, COLOR_END)
 }

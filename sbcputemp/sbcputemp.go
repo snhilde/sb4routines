@@ -94,11 +94,21 @@ func (r *routine) Update() {
 
 // Print formatted temperature average in degrees Celsius.
 func (r *routine) String() string {
+	var c string
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("%v °C", r.temp)
+	if r.temp < 75 {
+		c = r.colors.normal
+	} else if r.temp < 100 {
+		c = r.colors.warning
+	} else {
+		c = r.colors.error
+	}
+
+	return fmt.Sprintf("%s%v °C%s", c, r.temp, COLOR_END)
 }
 
 // Find the directory that has the temperature readings. It will be the one with the fan speeds,

@@ -118,6 +118,7 @@ func (r *routine) Update() {
 
 // Calculate the byte difference for each interface, and format and print it.
 func (r *routine) String() string {
+	var c string
 	var b strings.Builder
 
 	if r.err != nil {
@@ -128,10 +129,20 @@ func (r *routine) String() string {
 		down, down_u := shrink(iface.new_down - iface.old_down)
 		up, up_u     := shrink(iface.new_up   - iface.old_up)
 
+		if down_u == 'B' || up_u == 'B' || down_u == 'K' || up_u == 'K' {
+			c = r.colors.normal
+		} else if down_u == 'M' || up_u == 'M' {
+			c = r.colors.warning
+		} else {
+			c = r.colors.error
+		}
+
 		if i > 0 {
 			b.WriteString(", ")
 		}
+		b.WriteString(c)
 		fmt.Fprintf(&b, "%s: %4v%c↓/%4v%c↑", iface.name, down, down_u, up, up_u)
+		b.WriteString(COLOR_END)
 	}
 
 	return b.String()

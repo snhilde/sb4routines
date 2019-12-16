@@ -14,6 +14,7 @@ const (
 
 // routine is the main object for this package.
 // err:     error encountered along the way, if any
+// perc:    percentage of memory in use
 // total:   total amount of memory
 // total_u: unit of total memory
 // used:    amount of memory in current use
@@ -21,6 +22,7 @@ const (
 // colors:  trio of user-provided colors for displaying various states
 type routine struct {
 	err     error
+	perc    int
 	total   float32
 	total_u rune
 	used    float32
@@ -72,17 +74,28 @@ func (r *routine) Update() {
 		return
 	}
 
+	r.perc             = (total - avail) * 100 / total
 	r.total, r.total_u = shrink(total)
 	r.used,  r.used_u  = shrink(total - avail)
 }
 
 // Format and print the used and total system memory.
 func (r *routine) String() string {
+	var c string
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("%.1f%c/%.1f%c", r.used, r.used_u, r.total, r.total_u)
+	if r.perc < 75 {
+		c = r.colors.normal
+	} else if r.perc < 90 {
+		c = r.colors.warning
+	} else {
+		c = r.colors.error
+	}
+
+	return fmt.Sprintf("%s%.1f%c/%.1f%c%s", c, r.used, r.used_u, r.total, r.total_u, COLOR_END)
 }
 
 // Parse the meminfo file.
