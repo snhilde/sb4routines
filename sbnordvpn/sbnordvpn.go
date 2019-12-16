@@ -49,10 +49,10 @@ func New(colors ...[3]string) *routine {
 
 // Run the command and capture the output.
 func (r *routine) Update() {
-	cmd      := exec.Command("nordvpn", "status")
-	out, err := cmd.Output()
-	if err != nil {
-		r.err = err
+	var out []byte
+	cmd        := exec.Command("nordvpn", "status")
+	out, r.err  = cmd.Output()
+	if r.err != nil {
 		return
 	}
 
