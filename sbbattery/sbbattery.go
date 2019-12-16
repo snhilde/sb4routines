@@ -11,7 +11,7 @@ import (
 // err:    error encountered along the way, if any
 // max:    maximum capacity of battery
 // perc:   percentage of battery capacity left
-// colors: trio of used-provided colors for displaying various states
+// colors: trio of user-provided colors for displaying various states
 type routine struct {
 	err    error
 	max    int

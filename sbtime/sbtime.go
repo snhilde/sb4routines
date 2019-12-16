@@ -8,7 +8,7 @@ import (
 // A routine is the main object for the sbtime package.
 // time:   current timestamp
 // format: format for displaying time
-// colors: trio of used-provided colors for displaying various states
+// colors: trio of user-provided colors for displaying various states
 type routine struct {
 	time   time.Time
 	format string

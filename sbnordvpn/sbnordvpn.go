@@ -9,7 +9,7 @@ import (
 // routine is the main object in the package.
 // err:    error encountered along the way, if any
 // b:      buffer to hold connnection string
-// colors: trio of used-provided colors for displaying various states
+// colors: trio of user-provided colors for displaying various states
 type routine struct {
 	err    error
 	b      strings.Builder

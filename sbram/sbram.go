@@ -14,7 +14,7 @@ import (
 // total_u: unit of total memory
 // used:    amount of memory in current use
 // used_u:  unit of used memory
-// colors:  trio of used-provided colors for displaying various states
+// colors:  trio of user-provided colors for displaying various states
 type routine struct {
 	err     error
 	total   float32

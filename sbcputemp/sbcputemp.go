@@ -17,7 +17,7 @@ const base_dir = "/sys/class/hwmon/"
 // path:   path to the device directory, as discovered in findDir()
 // files:  slice of files that contain temperature readings
 // temp:   average temperature across all sensors, in degrees Celsius
-// colors: trio of used-provided colors for displaying various states
+// colors: trio of user-provided colors for displaying various states
 type routine struct {
 	err      error
 	path     string

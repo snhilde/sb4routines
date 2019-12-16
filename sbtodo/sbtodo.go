@@ -14,7 +14,7 @@ import (
 // info:   TODO file info, as returned by os.Stat()
 // line1:  first line of the TODO file
 // line2:  second line of the TODO file
-// colors: trio of used-provided colors for displaying various states
+// colors: trio of user-provided colors for displaying various states
 type routine struct {
 	err    error
 	path   string

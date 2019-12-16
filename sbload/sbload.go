@@ -10,7 +10,7 @@ import (
 // load_1:  load average over the last second
 // load_5:  load average over the last 5 seconds
 // load_15: load average over the last 15 seconds
-// colors:  trio of used-provided colors for displaying various states
+// colors:  trio of user-provided colors for displaying various states
 type routine struct {
 	err     error
 	load_1  float64

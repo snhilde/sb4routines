@@ -18,7 +18,7 @@ import (
 // temp:   current temperature for the provided zip code
 // high:   forecast high
 // low:    forecast low
-// colors: trio of used-provided colors for displaying various states
+// colors: trio of user-provided colors for displaying various states
 type routine struct {
 	err    error
 	client http.Client

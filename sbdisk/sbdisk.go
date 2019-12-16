@@ -9,7 +9,7 @@ import (
 // routine is the main object for this package.
 // err:    error encountered along the way, if any
 // disks:  slice of provided filesystems to stat
-// colors: trio of used-provided colors for displaying various states
+// colors: trio of user-provided colors for displaying various states
 type routine struct {
 	err      error
 	disks  []fs
