@@ -28,22 +28,24 @@ type routine struct {
 }
 
 // Create a new routine object with the current time.
-func New(format string, colors [3]string) *routine {
+func New(format string, colors ...[3]string) *routine {
 	var r routine
 
 	r.format = format
 	r.time   = time.Now()
 
-	// Do a minor sanity check on the color code.
-	for _, color := range colors {
-		if !strings.HasPrefix(color, "#") || len(color) != 7 {
-			r.err = errors.New("Invalid color")
-			return &r
+	// Do a minor sanity check on the color codes.
+	if len(colors) == 1 {
+		for _, color := range colors[0] {
+			if !strings.HasPrefix(color, "#") || len(color) != 7 {
+				r.err = errors.New("Invalid color")
+				return &r
+			}
 		}
+		r.colors.normal  = "^c" + colors[0][0] + "^"
+		r.colors.warning = "^c" + colors[0][1] + "^"
+		r.colors.error   = "^c" + colors[0][2] + "^"
 	}
-	r.colors.normal  = "^c" + colors[0] + "^"
-	r.colors.warning = "^c" + colors[1] + "^"
-	r.colors.error   = "^c" + colors[2] + "^"
 
 	return &r
 }
