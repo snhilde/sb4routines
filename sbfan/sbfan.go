@@ -9,9 +9,7 @@ import (
 	"fmt"
 )
 
-const (
-	COLOR_END = "^d^"
-)
+var COLOR_END = "^d^"
 
 // We need to root around in this directory for the device directory for the fan.
 const base_dir = "/sys/class/hwmon/"
@@ -55,6 +53,9 @@ func New(colors ...[3]string) *routine {
 		r.colors.normal  = "^c" + colors[0][0] + "^"
 		r.colors.warning = "^c" + colors[0][1] + "^"
 		r.colors.error   = "^c" + colors[0][2] + "^"
+	} else {
+		// If a color array wasn't passed in, then we don't want to print this.
+		COLOR_END = ""
 	}
 
 	// Find the max fan speed file and read its value.

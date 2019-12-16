@@ -8,9 +8,7 @@ import (
 	"bufio"
 )
 
-const (
-	COLOR_END = "^d^"
-)
+var COLOR_END = "^d^"
 
 // routine is the main object for this package.
 // It contains the data obtained from the specified TODO file, including file info and a copy of the first 2 lines.
@@ -51,6 +49,9 @@ func New(path string, colors ...[3]string) *routine {
 		r.colors.normal  = "^c" + colors[0][0] + "^"
 		r.colors.warning = "^c" + colors[0][1] + "^"
 		r.colors.error   = "^c" + colors[0][2] + "^"
+	} else {
+		// If a color array wasn't passed in, then we don't want to print this.
+		COLOR_END = ""
 	}
 
 	// Grab the base details of the TODO file.

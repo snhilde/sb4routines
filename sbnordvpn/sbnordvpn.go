@@ -6,9 +6,7 @@ import (
 	"errors"
 )
 
-const (
-	COLOR_END = "^d^"
-)
+var COLOR_END = "^d^"
 
 // routine is the main object in the package.
 // err:    error encountered along the way, if any
@@ -41,6 +39,9 @@ func New(colors ...[3]string) *routine {
 		r.colors.normal  = "^c" + colors[0][0] + "^"
 		r.colors.warning = "^c" + colors[0][1] + "^"
 		r.colors.error   = "^c" + colors[0][2] + "^"
+	} else {
+		// If a color array wasn't passed in, then we don't want to print this.
+		COLOR_END = ""
 	}
 
 	return &r
