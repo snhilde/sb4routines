@@ -31,8 +31,9 @@ type routine struct {
 func New(format string, colors ...[3]string) *routine {
 	var r routine
 
+	// Replace all colons in the format string with spaces, to get the blinking effect later.
 	r.format_a = format
-	r.format_b = strings.ReplaceAll(format, ":", " ")
+	r.format_b = strings.Replace(format, ":", " ", -1)
 	r.time     = time.Now()
 
 	// Do a minor sanity check on the color codes.
