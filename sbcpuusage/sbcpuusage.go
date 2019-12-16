@@ -14,11 +14,17 @@ import (
 // err:       error encountered along the way, if any
 // old_stats: CPU stats from last read
 // perc:      percentage of CPU currently being used
+// colors:    trio of used-provided colors for displaying various states
 type routine struct {
 	err       error
 	threads   int
 	old_stats stats
 	perc      int
+	colors    struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Type to hold values of different CPU stats

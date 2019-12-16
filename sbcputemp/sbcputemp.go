@@ -13,15 +13,21 @@ import (
 const base_dir = "/sys/class/hwmon/"
 
 // routine is the main object for this package.
-// err:   error encountered along the way, if any
-// path:  path to the device directory, as discovered in findDir()
-// files: slice of files that contain temperature readings
-// temp:  average temperature across all sensors, in degrees Celsius
+// err:    error encountered along the way, if any
+// path:   path to the device directory, as discovered in findDir()
+// files:  slice of files that contain temperature readings
+// temp:   average temperature across all sensors, in degrees Celsius
+// colors: trio of used-provided colors for displaying various states
 type routine struct {
-	err   error
-	path  string
-	files []os.FileInfo
-	temp  int
+	err      error
+	path     string
+	files  []os.FileInfo
+	temp     int
+	colors   struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Find our device directory, build a list of all the temperature sensors in it, and return a new object.

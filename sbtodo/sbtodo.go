@@ -9,17 +9,23 @@ import (
 
 // routine is the main object for this package.
 // It contains the data obtained from the specified TODO file, including file info and a copy of the first 2 lines.
-// err:   error encountered along the way, if any
-// path:  path to the TODO file
-// info:  TODO file info, as returned by os.Stat()
-// line1: first line of the TODO file
-// line2: second line of the TODO file
+// err:    error encountered along the way, if any
+// path:   path to the TODO file
+// info:   TODO file info, as returned by os.Stat()
+// line1:  first line of the TODO file
+// line2:  second line of the TODO file
+// colors: trio of used-provided colors for displaying various states
 type routine struct {
 	err    error
 	path   string
 	info   os.FileInfo
 	line1  string
 	line2  string
+	colors struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Return a new routine object.

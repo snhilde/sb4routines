@@ -18,6 +18,7 @@ import (
 // temp:   current temperature for the provided zip code
 // high:   forecast high
 // low:    forecast low
+// colors: trio of used-provided colors for displaying various states
 type routine struct {
 	err    error
 	client http.Client
@@ -26,6 +27,11 @@ type routine struct {
 	temp   int
 	high   int
 	low    int
+	colors struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Sanity-check zip code, and return new routine object.

@@ -7,11 +7,17 @@ import (
 )
 
 // routine is the main object in the package.
-// err: any error encountered along the way, if any
-// b:   buffer to hold connnection string
+// err:    error encountered along the way, if any
+// b:      buffer to hold connnection string
+// colors: trio of used-provided colors for displaying various states
 type routine struct {
-	err error
-	b   strings.Builder
+	err    error
+	b      strings.Builder
+	colors struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Return a new routine object.

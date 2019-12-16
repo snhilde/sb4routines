@@ -13,11 +13,17 @@ import (
 // control: control to query, as passed in by called
 // vol:     system volume, in multiple of ten, as percentage of max
 // muted:   true if volume is muted
+// colors:  trio of used-provided colors for displaying various states
 type routine struct {
 	err     error
 	control string
 	vol     int
 	muted   bool
+	colors  struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Store the passed-in control value and return a new routine object.

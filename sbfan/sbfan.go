@@ -20,6 +20,7 @@ const base_dir = "/sys/class/hwmon/"
 // max:      maximum speed of the fan, in RPM
 // out:      current speed of the fan, in RPM
 // perc:     percentage of maximum fan speed
+// colors:   trio of used-provided colors for displaying various states
 type routine struct {
 	err      error
 	path     string
@@ -28,6 +29,11 @@ type routine struct {
 	max      int
 	out      int
 	perc     int
+	colors   struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Search around in the base directory for a pair of max and current files, and return a new routine object.

@@ -14,12 +14,18 @@ import (
 // total_u: unit of total memory
 // used:    amount of memory in current use
 // used_u:  unit of used memory
+// colors:  trio of used-provided colors for displaying various states
 type routine struct {
 	err     error
 	total   float32
 	total_u rune
 	used    float32
 	used_u  rune
+	colors  struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Make and return a new routine object.

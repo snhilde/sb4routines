@@ -10,11 +10,17 @@ import (
 // load_1:  load average over the last second
 // load_5:  load average over the last 5 seconds
 // load_15: load average over the last 15 seconds
+// colors:  trio of used-provided colors for displaying various states
 type routine struct {
 	err     error
 	load_1  float64
 	load_5  float64
 	load_15 float64
+	colors  struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Return a new rountine object.

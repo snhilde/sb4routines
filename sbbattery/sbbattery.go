@@ -8,13 +8,19 @@ import (
 )
 
 // Main type for package.
-// err:  error encountered along the way, if any
-// max:  maximum capacity of battery
-// perc: percentage of battery capacity left
+// err:    error encountered along the way, if any
+// max:    maximum capacity of battery
+// perc:   percentage of battery capacity left
+// colors: trio of used-provided colors for displaying various states
 type routine struct {
-	err  error
-	max  int
-	perc int
+	err    error
+	max    int
+	perc   int
+	colors struct {
+		normal  string
+		warning string
+		error   string
+	}
 }
 
 // Read the maximum capacity of the battery and return struct.
