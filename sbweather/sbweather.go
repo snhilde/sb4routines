@@ -85,11 +85,20 @@ func (r *routine) Update() {
 
 // Format and print current temperature.
 func (r *routine) String() string {
+	var s string
+
 	if r.err != nil {
 		return r.err.Error()
 	}
 
-	return fmt.Sprintf("weather: %v °F (%v/%v)", r.temp, r.high, r.low)
+	t := time.Now()
+	if t.Hour() < 15 {
+		s = "today"
+	} else {
+		s = "tom"
+	}
+
+	return fmt.Sprintf("weather: %v °F (%s: %v/%v)", r.temp, s, r.high, r.low)
 }
 
 // Get the geographic coordinates for the provided zip code.
@@ -238,12 +247,13 @@ func getTemp(client http.Client, url string) (int, error) {
 // Get the forecasted temperatures from the NWS database.
 // Our values should be here: properties -> periods -> (chosen periods) -> temperature.
 // We're going to use these rules to determine which day's forecast we want:
-//   1. If it's before noon, we'll use the current day.
+//   1. If it's before 3 pm, we'll use the current day.
+//   2. If it's after 3 pm, we'll display the high/low for the next day.
 func getForecast(client http.Client, url string) (int, int, error) {
-	var  high     float64
-	var  low      float64
-	var  high_s   string
-	var  low_s    string
+	var  high_s string
+	var  low_s  string
+	var  high   float64
+	var  low    float64
 
 	type forecast struct {
 		Properties struct {
@@ -253,8 +263,13 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	// Determine which day's forecast we want.
 	t := time.Now()
-	if (t.Hour() < 12) {
-		high_s = "Today"
+	if t.Hour() < 15 {
+		// There's a different name before and after noon for the high.
+		if t.Hour() < 12 {
+			high_s = "Today"
+		} else {
+			high_s = "This Afternoon"
+		}
 		low_s  = "Tonight"
 	} else {
 		t       = t.Add(time.Hour * 24)
@@ -294,7 +309,7 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	// Iterate through the list until we find the forecast for tomorrow.
 	for _, f := range periods {
-		fmt.Println(f)
+		fmt.Println(f) // for testing
 		name := f["name"].(string)
 		if name == high_s {
 			// We'll get the high from here.
