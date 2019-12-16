@@ -87,34 +87,32 @@ func (r *routine) parseCommand(s string) {
 	// If there is no Internet connection, the command will return this:
 	//     Please check your internet connection and try again.
 	r.b.Reset()
-	lines := strings.Split(s, "\n");
-	if lines[0] == "Status: Connected" {
+	lines  := strings.Split(s, "\n");
+	fields := strings.Fields(lines[0])
+	switch fields[1] {
+	case "Connected":
 		r.color = r.colors.normal
 		for _, line := range lines {
 			if strings.HasPrefix(line, "City") {
-				fields := strings.Fields(line)
-				if len(fields) != 2 {
+				city := strings.Fields(line)
+				if len(city) != 2 {
 					r.err = errors.New("Error parsing City")
 				} else {
 					r.b.WriteString("Connected: ")
-					r.b.WriteString(fields[1])
+					r.b.WriteString(city[1])
 				}
 				break;
 			}
 		}
-
-	} else if lines[0] == "Status: Connecting" {
+	case "Connecting":
 		r.color = r.colors.warning
 		r.b.WriteString("Connecting...")
-
-	} else if lines[0] == "Status: Disconnected" {
+	case "Disconnected":
 		r.color = r.colors.warning
 		r.b.WriteString("Disconnected")
-
-	} else if lines[0] == "Please check your internet connection and try again." {
+	case "Please check your internet connection and try again.":
 		r.err = errors.New("Internet Down")
-
-	} else {
+	default:
 		r.err = errors.New(lines[0])
 	}
 }
