@@ -89,7 +89,7 @@ func (r *routine) String() string {
 	var b strings.Builder
 
 	if r.err != nil {
-		return r.err.Error()
+		return r.colors.error + r.err.Error() + COLOR_END
 	}
 
 	for i := range r.disks {

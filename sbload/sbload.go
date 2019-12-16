@@ -69,7 +69,7 @@ func (r *routine) String() string {
 	var c string
 
 	if r.err != nil {
-		return r.err.Error()
+		return r.colors.error + r.err.Error() + COLOR_END
 	}
 
 	if r.load_1 >= 2 || r.load_5 >= 2 || r.load_15 >= 2 {

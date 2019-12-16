@@ -112,7 +112,7 @@ func (r *routine) String() string {
 	var s string
 
 	if r.err != nil {
-		return r.err.Error()
+		return r.colors.error + r.err.Error() + COLOR_END
 	}
 
 	t := time.Now()

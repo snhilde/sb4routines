@@ -58,7 +58,7 @@ func (r *routine) Update() {
 // Print the time in this format: MM D - HH:MM".
 func (r *routine) String() string {
 	if r.err != nil {
-		return r.err.Error()
+		return r.colors.error + r.err.Error() + COLOR_END
 	}
 
 	if r.time.Second() % 2 == 0 {

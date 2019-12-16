@@ -61,7 +61,7 @@ func (r *routine) Update() {
 // Format and print the current connection status.
 func (r *routine) String() string {
 	if r.err != nil {
-		return "NordVPN: " + r.err.Error()
+		return r.colors.error + "NordVPN: " + r.err.Error() + COLOR_END
 	}
 
 	return r.color + r.b.String() + COLOR_END

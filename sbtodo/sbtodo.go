@@ -103,7 +103,7 @@ func (r *routine) String() string {
 
 	// Handle any error we might have received in another stage.
 	if r.err != nil {
-		return r.err.Error()
+		return r.colors.error + r.err.Error() + COLOR_END
 	}
 
 	r.line1 = strings.TrimSpace(r.line1)

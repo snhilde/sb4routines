@@ -95,7 +95,7 @@ func (r *routine) Update() {
 // Print either an error, the mute status, or the volume percentage.
 func (r *routine) String() string {
 	if r.err != nil {
-		return r.err.Error()
+		return r.colors.error + r.err.Error() + COLOR_END
 	}
 
 	if r.muted {
