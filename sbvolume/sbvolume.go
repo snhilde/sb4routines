@@ -1,9 +1,9 @@
 package sbvolume
 
 import (
-	"os/exec"
-	"strings"
 	"errors"
+	"strings"
+	"os/exec"
 	"strconv"
 	"fmt"
 )
@@ -31,6 +31,17 @@ func New(control string, colors [3]string) *routine {
 	var r routine
 
 	r.control = control
+
+	// Do a minor sanity check on the color code.
+	for _, color := range colors {
+		if !strings.HasPrefix(color, "#") || len(color) != 7 {
+			r.err = errors.New("Invalid color")
+			return &r
+		}
+	}
+	r.colors.normal  = colors[0]
+	r.colors.warning = colors[1]
+	r.colors.error   = colors[2]
 
 	return &r
 }

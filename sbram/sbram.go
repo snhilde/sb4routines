@@ -1,9 +1,9 @@
 package sbram
 
 import (
-	"io/ioutil"
-	"strings"
 	"errors"
+	"strings"
+	"io/ioutil"
 	"strconv"
 	"fmt"
 )
@@ -30,7 +30,20 @@ type routine struct {
 
 // Make and return a new routine object.
 func New(colors [3]string) *routine {
-	return new(routine)
+	var r routine
+
+	// Do a minor sanity check on the color code.
+	for _, color := range colors {
+		if !strings.HasPrefix(color, "#") || len(color) != 7 {
+			r.err = errors.New("Invalid color")
+			return &r
+		}
+	}
+	r.colors.normal  = colors[0]
+	r.colors.warning = colors[1]
+	r.colors.error   = colors[2]
+
+	return &r
 }
 
 // Get the memory resources. Unfortunately, we can't use syscall.Sysinfo() or another syscall function, because it

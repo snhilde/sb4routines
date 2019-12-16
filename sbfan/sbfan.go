@@ -1,11 +1,11 @@
 package sbfan
 
 import (
+	"errors"
+	"strings"
 	"os"
 	"io/ioutil"
 	"strconv"
-	"strings"
-	"errors"
 	"fmt"
 )
 
@@ -39,6 +39,17 @@ type routine struct {
 // Search around in the base directory for a pair of max and current files, and return a new routine object.
 func New(colors [3]string) *routine {
 	var r routine
+
+	// Do a minor sanity check on the color code.
+	for _, color := range colors {
+		if !strings.HasPrefix(color, "#") || len(color) != 7 {
+			r.err = errors.New("Invalid color")
+			return &r
+		}
+	}
+	r.colors.normal  = colors[0]
+	r.colors.warning = colors[1]
+	r.colors.error   = colors[2]
 
 	// Find the max fan speed file and read its value.
 	r.findFiles()

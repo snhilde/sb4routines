@@ -2,8 +2,9 @@
 package sbtodo
 
 import (
-	"os"
+	"errors"
 	"strings"
+	"os"
 	"bufio"
 )
 
@@ -35,6 +36,18 @@ func New(path string, colors [3]string) *routine {
 
 	r.path = path
 
+	// Do a minor sanity check on the color code.
+	for _, color := range colors {
+		if !strings.HasPrefix(color, "#") || len(color) != 7 {
+			r.err = errors.New("Invalid color")
+			return &r
+		}
+	}
+	r.colors.normal  = colors[0]
+	r.colors.warning = colors[1]
+	r.colors.error   = colors[2]
+
+	// Grab the base details of the TODO file.
 	r.info, r.err = os.Stat(path)
 	if r.err != nil {
 		// We'll print the error in String().

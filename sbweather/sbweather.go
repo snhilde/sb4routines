@@ -2,6 +2,7 @@ package sbweather
 
 import (
 	"errors"
+	"strings"
 	"strconv"
 	"net/http"
 	"io/ioutil"
@@ -49,6 +50,17 @@ func New(zip string, colors [3]string) *routine {
 		return &r
 	}
 	r.zip = zip
+
+	// Do a minor sanity check on the color code.
+	for _, color := range colors {
+		if !strings.HasPrefix(color, "#") || len(color) != 7 {
+			r.err = errors.New("Invalid color")
+			return &r
+		}
+	}
+	r.colors.normal  = colors[0]
+	r.colors.warning = colors[1]
+	r.colors.error   = colors[2]
 
 	return &r
 }

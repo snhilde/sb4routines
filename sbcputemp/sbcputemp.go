@@ -1,12 +1,12 @@
 package sbcputemp
 
 import (
+	"errors"
+	"strings"
 	"fmt"
 	"os"
 	"io/ioutil"
 	"strconv"
-	"strings"
-	"errors"
 )
 
 // We need to root around in this directory for the device directory for the fan.
@@ -33,6 +33,17 @@ type routine struct {
 // Find our device directory, build a list of all the temperature sensors in it, and return a new object.
 func New(colors [3]string) *routine {
 	var r routine
+
+	// Do a minor sanity check on the color code.
+	for _, color := range colors {
+		if !strings.HasPrefix(color, "#") || len(color) != 7 {
+			r.err = errors.New("Invalid color")
+			return &r
+		}
+	}
+	r.colors.normal  = colors[0]
+	r.colors.warning = colors[1]
+	r.colors.error   = colors[2]
 
 	// Error will be handled in Update() and String().
 	r.path, r.err = findDir()
