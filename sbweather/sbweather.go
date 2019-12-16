@@ -333,7 +333,6 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	// Iterate through the list until we find the forecast for tomorrow.
 	for _, f := range periods {
-		fmt.Println(f) // for testing
 		name := f["name"].(string)
 		if name == high_s {
 			// We'll get the high from here.
