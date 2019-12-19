@@ -105,15 +105,15 @@ func (r *routine) Update() {
 
 		down, err := readFile(iface.down_path)
 		if err != nil {
-			r.err = err
-			break
+			// r.err = err
+			continue
 		}
 		r.ilist[i].new_down = down
 
 		up, err := readFile(iface.up_path)
 		if err != nil {
-			r.err = err
-			break
+			// r.err = err
+			continue
 		}
 		r.ilist[i].new_up = up
 	}
