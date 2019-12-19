@@ -10,6 +10,13 @@ import (
 
 var COLOR_END = "^d^"
 
+const (
+	UNKNOWN  = -1
+	CHARGING = iota
+	DISCHARGING
+	FULL
+)
+
 // Main type for package.
 // err:    error encountered along the way, if any
 // max:    maximum capacity of battery
@@ -19,6 +26,7 @@ type routine struct {
 	err    error
 	max    int
 	perc   int
+	status int
 	colors struct {
 		normal  string
 		warning string
@@ -47,7 +55,7 @@ func New(colors ...[3]string) *routine {
 	}
 
 	// Error will be handled in both Update() and String().
-	r.max, r.err = readFile("/sys/class/power_supply/BAT0/charge_full")
+	r.max, r.err = readCharge("/sys/class/power_supply/BAT0/charge_full")
 
 	return &r
 }
@@ -59,7 +67,8 @@ func (r *routine) Update() {
 		return
 	}
 
-	now, err := readFile("/sys/class/power_supply/BAT0/charge_now")
+	// Get current charge and calculate percentage.
+	now, err := readCharge("/sys/class/power_supply/BAT0/charge_now")
 	if err != nil {
 		r.err = err
 		return
@@ -71,6 +80,25 @@ func (r *routine) Update() {
 	} else if r.perc > 100 {
 		r.perc = 100
 	}
+
+	// Get charging status.
+	status, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/status")
+	if err != nil {
+		r.err = err
+		return
+	}
+
+	switch string(status) {
+	case "Charging":
+		r.status = CHARGING
+	case "Discharging":
+		r.status = DISCHARGING
+	case "Full":
+		r.status = FULL
+	default:
+		r.status = UNKNOWN
+	}
+
 }
 
 // Print formatted percentage of battery left.
@@ -93,7 +121,7 @@ func (r *routine) String() string {
 }
 
 // Read out value from file.
-func readFile(path string) (int, error) {
+func readCharge(path string) (int, error) {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return -1, err
