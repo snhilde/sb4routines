@@ -88,7 +88,7 @@ func (r *routine) Update() {
 		return
 	}
 
-	switch string(status) {
+	switch strings.TrimSpace(string(status)) {
 	case "Charging":
 		r.status = CHARGING
 	case "Discharging":
@@ -104,6 +104,7 @@ func (r *routine) Update() {
 // Print formatted percentage of battery left.
 func (r *routine) String() string {
 	var c string
+	var s string
 
 	if r.err != nil {
 		return r.colors.error + r.err.Error() + COLOR_END
@@ -117,7 +118,17 @@ func (r *routine) String() string {
 		c = r.colors.error
 	}
 
-	return fmt.Sprintf("%s%v%% BAT%s", c, r.perc, COLOR_END)
+	if r.status == CHARGING {
+		s = fmt.Sprintf("+%v%%", r.perc)
+	} else if r.status == DISCHARGING {
+		s = fmt.Sprintf("-%v%%", r.perc)
+	} else if r.status == FULL {
+		s = "Full"
+	} else {
+		s = fmt.Sprintf("%v%%", r.perc)
+	}
+
+	return fmt.Sprintf("%s%s BAT%s", c, s, COLOR_END)
 }
 
 // Read out value from file.
