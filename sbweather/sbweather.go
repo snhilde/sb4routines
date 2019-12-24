@@ -284,10 +284,11 @@ func getForecast(client http.Client, url string) (int, int, error) {
 		} `json:"properties"`
 	}
 
-	// Determine which day's forecast we want.
+	// If it's before 3pm, we'll use the forecast of the current day.
+	// After that, we'll use tomorrow's forecast.
 	t := time.Now()
 	if t.Hour() >= 15 {
-		t = t.Add(time.Hour * 24)
+		t = t.Add(time.Hour * 12)
 	}
 	high_s := t.Format("2006-01-02T") + "06:00:00"
 	low_s  := t.Format("2006-01-02T") + "18:00:00"
