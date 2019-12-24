@@ -275,10 +275,8 @@ func getTemp(client http.Client, url string) (int, error) {
 //   1. If it's before 3 pm, we'll use the current day.
 //   2. If it's after 3 pm, we'll display the high/low for the next day.
 func getForecast(client http.Client, url string) (int, int, error) {
-	var  high_s string
-	var  low_s  string
-	var  high   float64
-	var  low    float64
+	var  high float64
+	var  low  float64
 
 	type forecast struct {
 		Properties struct {
@@ -288,20 +286,11 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	// Determine which day's forecast we want.
 	t := time.Now()
-	if t.Hour() < 15 {
-		// There's a different name before and after noon for the high.
-		if t.Hour() < 12 {
-			high_s = "Today"
-		} else {
-			high_s = "This Afternoon"
-		}
-		low_s  = "Tonight"
-	} else {
-		t       = t.Add(time.Hour * 24)
-		d      := t.Weekday()
-		high_s  = d.String()
-		low_s   = high_s + " Night"
+	if t.Hour() >= 15 {
+		t = t.Add(time.Hour * 24)
 	}
+	high_s := t.Format("2006-01-02T") + "06:00:00"
+	low_s  := t.Format("2006-01-02T") + "18:00:00"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -334,11 +323,11 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	// Iterate through the list until we find the forecast for tomorrow.
 	for _, f := range periods {
-		name := f["name"].(string)
-		if name == high_s {
+		st := f["startTime"].(string)
+		if strings.Contains(st, high_s) {
 			// We'll get the high from here.
 			high = f["temperature"].(float64)
-		} else if name == low_s {
+		} else if strings.Contains(st, low_s) {
 			// We'll get the low from here.
 			low = f["temperature"].(float64)
 
