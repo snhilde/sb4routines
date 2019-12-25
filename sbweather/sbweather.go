@@ -125,7 +125,7 @@ func (r *routine) String() string {
 		s = "tom"
 	}
 
-	return fmt.Sprintf("%sweather: %v °F (%s: %v/%v)%s", r.colors.normal, r.temp, s, r.high, r.low, COLOR_END)
+	return fmt.Sprintf("%s%v °F (%s: %v/%v)%s", r.colors.normal, r.temp, s, r.high, r.low, COLOR_END)
 }
 
 // Get the geographic coordinates for the provided zip code.
