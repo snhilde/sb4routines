@@ -74,6 +74,8 @@ func New(zip string, colors ...[3]string) *routine {
 
 // Get the current hourly temperature. Also, if first run of the session, initialize object.
 func (r *routine) Update() {
+	r.err = nil
+
 	if r.url == "" {
 		// Get coordinates.
 		lat, long, err := getCoords(r.client, r.zip)
@@ -290,8 +292,7 @@ func getForecast(client http.Client, url string) (int, int, error) {
 	if t.Hour() >= 15 {
 		t = t.Add(time.Hour * 12)
 	}
-	high_s := t.Format("2006-01-02T") + "06:00:00"
-	low_s  := t.Format("2006-01-02T") + "18:00:00"
+	ts := t.Format("2006-01-02T") + "18:00:00"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -324,11 +325,12 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	// Iterate through the list until we find the forecast for tomorrow.
 	for _, f := range periods {
+		et := f["endTime"].(string)
 		st := f["startTime"].(string)
-		if strings.Contains(st, high_s) {
+		if strings.Contains(et, ts) {
 			// We'll get the high from here.
 			high = f["temperature"].(float64)
-		} else if strings.Contains(st, low_s) {
+		} else if strings.Contains(st, ts) {
 			// We'll get the low from here.
 			low = f["temperature"].(float64)
 
