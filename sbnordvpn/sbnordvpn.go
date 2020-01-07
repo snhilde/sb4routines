@@ -94,12 +94,12 @@ func (r *routine) parseCommand(s string) {
 		r.color = r.colors.normal
 		for _, line := range lines {
 			if strings.HasPrefix(line, "City") {
-				city := strings.Fields(line)
+				city := strings.Split(line, ":");
 				if len(city) != 2 {
 					r.err = errors.New("Error parsing City")
 				} else {
 					r.b.WriteString("Connected: ")
-					r.b.WriteString(city[1])
+					r.b.WriteString(strings.TrimSpace(city[1]))
 				}
 				break;
 			}
