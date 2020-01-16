@@ -1,3 +1,5 @@
+// Package sbcputemp displays the temperature of the CPU in degrees Celsius.
+// Currently only supported on Linux.
 package sbcputemp
 
 import (
