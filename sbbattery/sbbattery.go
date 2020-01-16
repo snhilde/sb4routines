@@ -1,3 +1,5 @@
+// Package sbbattery displays the percentage of battery capacity left as well as
+// a charging status indicator.
 package sbbattery
 
 import (
