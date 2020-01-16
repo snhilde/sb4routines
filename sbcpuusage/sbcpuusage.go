@@ -1,3 +1,4 @@
+// Package sbcpuusage displays the percentage of CPU resources currently being used.
 package sbcpuusage
 
 import (
