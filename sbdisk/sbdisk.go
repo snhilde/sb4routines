@@ -1,3 +1,4 @@
+// Package sbdisk displays disk resources for each filesystem provided.
 package sbdisk
 
 import (
