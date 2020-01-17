@@ -1,3 +1,4 @@
+// Package sbload displays the average system load over the last one, five, and fifteen minutes.
 package sbload
 
 import (
