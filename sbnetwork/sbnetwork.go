@@ -1,3 +1,5 @@
+// Package sbnetwork displays the number of bytes sent and received per given time period for either the provided
+// network interfaces or the ones currently marked as active.
 package sbnetwork
 
 import (
