@@ -1,4 +1,4 @@
-// Package sbtodo prints the first two lines of a TODO list.
+// Package sbtodo displays the first two lines of a TODO list.
 package sbtodo
 
 import (
