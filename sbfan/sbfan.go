@@ -1,3 +1,4 @@
+// Package sbfan displays the current fan speed in RPM.
 package sbfan
 
 import (
