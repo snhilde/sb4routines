@@ -1,4 +1,4 @@
-// Package sbtime displays the current time, according to the format.
+// Package sbtime displays the current time in the provided format.
 package sbtime
 
 import (
@@ -60,7 +60,7 @@ func (r *routine) Update() {
 	r.time = time.Now()
 }
 
-// Print the time in this format: MM D - HH:MM".
+// Print the time in provided format.
 func (r *routine) String() string {
 	if r.err != nil {
 		return r.colors.error + r.err.Error() + COLOR_END
