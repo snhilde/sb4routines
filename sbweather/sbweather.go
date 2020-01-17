@@ -1,3 +1,4 @@
+// Package sbweather displays the current weather in the provided zip code.
 package sbweather
 
 import (
