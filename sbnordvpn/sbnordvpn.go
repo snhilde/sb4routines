@@ -1,3 +1,4 @@
+// Package sbnordvpn displays the current status of the NordVPN connection, including the city and any connection errors.
 package sbnordvpn
 
 import (
