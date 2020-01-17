@@ -1,3 +1,4 @@
+// Package sbvolume displays the current volume as a percentage.
 package sbvolume
 
 import (
