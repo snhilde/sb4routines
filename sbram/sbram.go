@@ -1,3 +1,4 @@
+// Package sbram displays the currently used and total system memory.
 package sbram
 
 import (
