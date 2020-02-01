@@ -17,6 +17,7 @@ var COLOR_END = "^d^"
 type routine struct {
 	err    error
 	b      strings.Builder
+	blink  bool
 	color  string
 	colors struct {
 		normal  string
@@ -99,7 +100,13 @@ func (r *routine) parseCommand(s string) {
 				if len(city) != 2 {
 					r.err = errors.New("Error parsing City")
 				} else {
-					r.b.WriteString("Connected: ")
+					if r.blink {
+						r.blink = false
+						r.b.WriteString("Connected: ")
+					} else {
+						r.blink = true
+						r.b.WriteString("Connected  ")
+					}
 					r.b.WriteString(strings.TrimSpace(city[1]))
 				}
 				break;
