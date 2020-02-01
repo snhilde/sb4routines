@@ -1,4 +1,5 @@
 // Package sbweather displays the current weather in the provided zip code.
+// Currently supported for US only.
 package sbweather
 
 import (
@@ -81,14 +82,14 @@ func (r *routine) Update() {
 		// Get coordinates.
 		lat, long, err := getCoords(r.client, r.zip)
 		if err != nil {
-			r.err = err
+			r.err = errors.New("No Coordinates")
 			return
 		}
 
 		// Get forecast URL.
 		url, err := getURL(r.client, lat, long)
 		if err != nil {
-			r.err = err
+			r.err = errors.New("No Forecast Data")
 			return
 		}
 		r.url = url
@@ -234,25 +235,25 @@ func getTemp(client http.Client, url string) (int, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return -1, err
+		return -1, errors.New("Temp: Bad Request")
 	}
 	req.Header.Set("accept", "application/json")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return -1, err
+		return -1, errors.New("Temp: Bad Client")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return -1, err
+		return -1, errors.New("Temp: Bad Read")
 	}
 
 	t   := temp{}
 	err  = json.Unmarshal(body, &t)
 	if err != nil {
-		return -1, err
+		return -1, errors.New("Temp: Bad JSON")
 	}
 
 	// Get the list of weather readings.
@@ -297,25 +298,26 @@ func getForecast(client http.Client, url string) (int, int, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return -1, -1, err
+		return -1, -1, errors.New("Forecast: Bad Request")
 	}
 	req.Header.Set("accept", "application/json")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return -1, -1, err
+		return -1, -1, errors.New("Forecast: Bad Client")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return -1, -1, err
+		return -1, -1, errors.New("Forecast: Bad Read")
 	}
+	// TODO: handle expired grid.
 
 	f   := forecast{}
 	err  = json.Unmarshal(body, &f)
 	if err != nil {
-		return -1, -1, err
+		return -1, -1, errors.New("Forecast: Bad JSON")
 	}
 
 	// Get the list of forecasts.
