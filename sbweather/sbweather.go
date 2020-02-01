@@ -294,7 +294,7 @@ func getForecast(client http.Client, url string) (int, int, error) {
 	if t.Hour() >= 15 {
 		t = t.Add(time.Hour * 12)
 	}
-	ts := t.Format("2006-01-02T") + "18:00:00"
+	timeStr := t.Format("2006-01-02T") + "18:00:00"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -330,10 +330,10 @@ func getForecast(client http.Client, url string) (int, int, error) {
 	for _, f := range periods {
 		et := f["endTime"].(string)
 		st := f["startTime"].(string)
-		if strings.Contains(et, ts) {
+		if strings.Contains(et, timeStr) {
 			// We'll get the high from here.
 			high = f["temperature"].(float64)
-		} else if strings.Contains(st, ts) {
+		} else if strings.Contains(st, timeStr) {
 			// We'll get the low from here.
 			low = f["temperature"].(float64)
 
