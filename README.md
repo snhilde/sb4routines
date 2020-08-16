@@ -1,5 +1,4 @@
 ![Version Badge](https://img.shields.io/badge/Version-1.0-informational)
-![Maintenance Badge](https://img.shields.io/badge/Maintained-no-success)
 ![Class Badge](https://img.shields.io/badge/Status-archived-important)
 
 # sb4routines
